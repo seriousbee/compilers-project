@@ -34,10 +34,15 @@ Comment = {TraditionalComment} | {EndOfLineComment}
 EndOfLineComment     = "#" {InputCharacter}* {LineTerminator}?
 TraditionalComment   = "/#" [^#] ~"#/" | "/#" "#"+ "/"
 
-
 Identifier = [:jletter:] ([:jletter:] | [:jletterdigit:] | [_])*
 
-DecIntegerLiteral = 0 | [1-9][0-9]*
+DecIntegerLiteral = 0 | [-]?[1-9]([0-9] | [_])*
+
+DecPositiveIntegerLiteral = 0 | [1-9]([0-9] | [_])*
+
+RationalLiteral = {DecIntegerLiteral} [/] {DecPositiveIntegerLiteral}
+
+FloatLiteral = {DecIntegerLiteral} [.] {DecPositiveIntegerLiteral}
 
 %state STRING
 
@@ -53,17 +58,36 @@ DecIntegerLiteral = 0 | [1-9][0-9]*
 <YYINITIAL> "seq"              { return symbol(sym.SEQUENCE); }
 <YYINITIAL> "set"              { return symbol(sym.SET); }
 <YYINITIAL> "bool"            { return symbol(sym.BOOLEAN); }
+<YYINITIAL> "top"              { return symbol(sym.TOP); }
 
+/* top-level keywords */
+<YYINITIAL> "alias"           { return symbol(sym.ALIAS); }
+<YYINITIAL> "thread"           { return symbol(sym.THREAD); }
+<YYINITIAL> "fdef"              { return symbol(sym.FUN_DEF); }
+<YYINITIAL> "function"              { return symbol(sym.FUNCTION); }
+<YYINITIAL> "tdef"              { return symbol(sym.TYPE_DEF); }
+<YYINITIAL> "return"              { return symbol(sym.RETURN); }
 
-<YYINITIAL> "alias"           { return symbol(sym.ABSTRACT); }
+/* conditional keywords */
+<YYINITIAL> "if"           { return symbol(sym.IF); }
+<YYINITIAL> "elif"              { return symbol(sym.ELIF); }
+<YYINITIAL> "else"              { return symbol(sym.ELSE); }
+
+/* loops keywords */
+<YYINITIAL> "while"              { return symbol(sym.WHILE); }
+<YYINITIAL> "forall"              { return symbol(sym.FORALL); }
 <YYINITIAL> "break"              { return symbol(sym.BREAK); }
+
+/* built-in functions */
 <YYINITIAL> "main"              { return symbol(sym.MAIN); }
+<YYINITIAL> "print"           { return symbol(sym.PRINT); }
+<YYINITIAL> "read"           { return symbol(sym.READ); }
+
+/* boolean types */
 <YYINITIAL> "T"              { return symbol(sym.TRUE); }
 <YYINITIAL> "F"              { return symbol(sym.FALSE); }
 
-<YYINITIAL> "top"              { return symbol(sym.TOP); }
-<YYINITIAL> "T"              { return symbol(sym.TRUE); }
-
+/* END KEYWORDS */
 
 <YYINITIAL> {
   /* identifiers */
@@ -73,11 +97,26 @@ DecIntegerLiteral = 0 | [1-9][0-9]*
   {DecIntegerLiteral}            { return symbol(sym.INTEGER_LITERAL); }
   \"                             { string.setLength(0); yybegin(STRING); }
 
-  /* operators */
-  "="                            { return symbol(sym.EQ); }
-  "=="                           { return symbol(sym.EQEQ); }
+  /* math operators */
   "+"                            { return symbol(sym.PLUS); }
-  
+  "-"                           { return symbol(sym.MINUS); }
+  "*"                            { return symbol(sym.MULTIPLICATION); }
+  "/"                            { return symbol(sym.DIVISION); }
+  "^"                           { return symbol(sym.POWER); }
+
+  /* bool operators */
+  "!"                            { return symbol(sym.NOT); }
+  "&&"                            { return symbol(sym.AND); }
+  "||"                           { return symbol(sym.OR); }
+
+  /* comparison operators */
+  "<"                            { return symbol(sym.SMALLER); }
+  "<="                            { return symbol(sym.SMALLER_EQ); }
+  ">"                           { return symbol(sym.BIGGER); }
+  ">="                            { return symbol(sym.BIGGER_EQ); }
+  "=="                            { return symbol(sym.EQUAL); }
+  "!="                           { return symbol(sym.NOT_EQ); }
+
 
   /* comments */
   {Comment}                      { /* ignore */ }
