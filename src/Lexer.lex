@@ -1,9 +1,5 @@
-/* JFlex example: partial Java language lexer specification */
 import java_cup.runtime.*;
 
-/**
- * This class is a simple example lexer.
- */
 %%
 
 %class Lexer
@@ -44,6 +40,8 @@ RationalLiteral = {DecIntegerLiteral} [/] {DecPositiveIntegerLiteral}
 
 FloatLiteral = {DecIntegerLiteral} [.] {DecPositiveIntegerLiteral}
 
+CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
+
 %state STRING
 
 %%
@@ -82,7 +80,6 @@ FloatLiteral = {DecIntegerLiteral} [.] {DecPositiveIntegerLiteral}
 <YYINITIAL> "main"              { return symbol(sym.MAIN); }
 <YYINITIAL> "print"           { return symbol(sym.PRINT); }
 <YYINITIAL> "read"           { return symbol(sym.READ); }
-<YYINITIAL> "in"           { return symbol(sym.IN_SET); }
 
 
 /* boolean types */
@@ -127,10 +124,12 @@ FloatLiteral = {DecIntegerLiteral} [.] {DecPositiveIntegerLiteral}
   "|"                            { return symbol(sym.SET_UNION); }
   "&"                            { return symbol(sym.SET_INTSECT); }
   "\"                           { return symbol(sym.SET_DIFF); }
+  "in"                             { return symbol(sym.IN_SET); }
+
 
   /* seq operators */
   "::"                            { return symbol(sym.SEQ_CONCAT); }
-
+  "len"                             { return symbol(sym.SEQ_LEN); }
 
   /* comments */
   {Comment}                      { /* ignore */ }

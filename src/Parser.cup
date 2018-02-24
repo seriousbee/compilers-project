@@ -1,46 +1,83 @@
-/* Simple +/-/* expression language; parser evaluates constant expressions on the fly*/
 import java_cup.runtime.*;
+import java.util.*;
 
 parser code {:
-scanner s;
-boolean syntaxErrors;
-Parser(scanner s){
-this.s=s;
-syntaxErrors = false;
-}
+  public boolean syntaxErrors;
 
-public void syntax_error(Symbol current_token) {
-report_error(
-"Syntax error at line " + (current_token.left+1) + ", column "
-+ current_token.right, null
-);
-}
+  Lexer lexer;
 
-:}
-init with {: s.init(); :};
-scan with {: return s.next_token(); :};
-/* Terminals (tokens returned by the scanner). */
-terminal            SEMI, PLUS, MINUS, TIMES, UMINUS, LPAREN, RPAREN;
-terminal Integer    NUMBER;        // our scanner provides numbers as integers
+  public Parser(Lexer lex, ComplexSymbolFactory sf) {
+    super(lex,sf);
+    lexer = lex;
+  }
+
+  public void syntax_error(Symbol current_token) {
+    syntaxErrors = true;
+    report_error( "Syntax error at line " + (current_token.left+1) + ", column " + current_token.right, null);
+  }
+
+:};
+
+terminal         SEMICOLON, COMMA, LPAR, RPAR, BEGIN, END,IF, ELSE, WHILE, READ, WRITE, BUNOP, ASSIGN;
+terminal Integer TYPE, BINOP, UNOP, COMP, BBINOP, INTCONST;
+terminal String  IDENT,STRINGCONST;
+terminal Boolean BOOLCONST;
 
 /* Non terminals */
-non terminal            expr_list;
-non terminal Integer    expr;      // used to store evaluated subexpressions
+non terminal Program        program;
+non terminal List<Decl>     decllist;
+non terminal Decl           decl;
+non terminal List<Stmt>     stmtlist;
+non terminal List<Expr.Identifier>   identlist;
+non terminal Stmt           stmt;
+non terminal Expr           expr;
+non terminal Cond           cond;
 
 /* Precedences */
 precedence left PLUS, MINUS;
 precedence left TIMES;
 precedence left UMINUS;
 
-/* The grammar rules */
-expr_list ::= expr_list expr:e SEMI         {: System.out.println(e);:}
-    | expr:e SEMI                           {: System.out.println(e);:}
-;
-expr      ::= expr:e1 PLUS  expr:e2         {: RESULT = e1+e2;       :}
-             | expr:e1 MINUS expr:e2        {: RESULT = e1-e2;       :}
-             | expr:e1 TIMES expr:e2        {: RESULT = e1*e2;       :}
-             | MINUS expr:e                 {: RESULT = -e;          :}
-             %prec UMINUS
-             | LPAREN expr:e RPAREN         {: RESULT = e;           :}
-             | NUMBER:n                     {: RESULT = n;           :}
-             ;
+
+precedence left ELSE, UNOP, BINOP, BUNOP, BBINOP;
+
+program   ::=  decllist:d stmtlist:s                        {: RESULT = new Program(d,s); :}
+    ;
+decllist  ::=  decl:d decllist:dl                           {: dl.add(d); RESULT = dl; :}
+    | /* empty decllist */                                  {: RESULT = new LinkedList<Decl>(); :}
+    ;
+stmtlist  ::= stmtlist:sl stmt:s                            {: sl.add(s); RESULT = sl; :}
+    | /* empty stmtlist */                                  {: RESULT = new LinkedList<Stmt>(); :}
+    ;
+decl ::= TYPE IDENT:i identlist:il  SEMICOLON               {: il.add(0,Expr.ident(ixleft,i,ixright));
+                                                               RESULT = new Decl(il); :}
+    ;
+identlist  ::= identlist:il COMMA IDENT:i                   {: il.add(Expr.ident(ixleft,i,ixright)); RESULT = il; :}
+    | /* empty identlist*/                                  {: RESULT = new LinkedList<Expr.Identifier>(); :}
+    ;
+stmt ::= SEMICOLON                                          {: RESULT = Stmt.empty(); :}
+    | BEGIN stmtlist:sl END                                 {: RESULT = Stmt.compound(sl); :}
+    | IDENT:i ASSIGN expr:e SEMICOLON                       {: RESULT = Stmt.assign(ixleft,i,e,ixright); :}
+    | IDENT:i ASSIGN READ LPAR RPAR SEMICOLON               {: RESULT = Stmt.read(ixleft,i,ixright); :}
+    | IDENT:i ASSIGN READ LPAR STRINGCONST:s RPAR SEMICOLON {: RESULT = Stmt.read(ixleft,i,s,ixright); :}
+    | WRITE LPAR expr:e RPAR SEMICOLON                      {: RESULT = Stmt.write(e); :}
+    | WRITE LPAR STRINGCONST:s RPAR SEMICOLON               {: RESULT = Stmt.write(s); :}
+    | IF LPAR cond:c RPAR stmt:s                            {: RESULT = Stmt.ifthen(c,s); :}
+    | IF LPAR cond:c RPAR stmt:t ELSE stmt:e                {: RESULT = Stmt.ifthenelse(c,t,e); :}
+    | WHILE LPAR cond:c RPAR stmt:s                         {: RESULT = Stmt.whileloop(c,s); :}
+    | error:e                                               {: parser.report_error("Syntax error, skip rest",e); :}
+    ;
+cond ::= BOOLCONST:c                                        {: RESULT = Cond.boolconst(c); :}
+    | LPAR cond:c RPAR                                      {: RESULT = Cond.priority(c); :}
+    | expr:e1 COMP:op expr:e2                               {: RESULT = Cond.binop(e1,op,e2); :}
+    | BUNOP cond:c                                          {: RESULT = Cond.unop(c); :}
+    | cond:c1 BBINOP:op cond:c2                             {: RESULT = Cond.binop(c1,op,c2); :}
+    ;
+/* Yes, this grammar does not adhere to precedence of multiplication over addition                             */
+/* This is due to the fact that it is introduced with an ambiguous grammar in the lecture, and was never fixed */
+expr ::= IDENT:i                                            {: RESULT = Expr.ident(ixleft,i,ixright); :}
+    | INTCONST:c                                            {: RESULT = Expr.intconst(c); :}
+    | LPAR expr:e RPAR                                      {: RESULT = Expr.priority(e); :}
+    | BINOP expr:e                                          {: RESULT = Expr.unop(e); :}
+    | expr:e1 BINOP:op expr:e2                              {: RESULT = Expr.binop(e1,op,e2); :}
+    ;
