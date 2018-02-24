@@ -82,10 +82,13 @@ FloatLiteral = {DecIntegerLiteral} [.] {DecPositiveIntegerLiteral}
 <YYINITIAL> "main"              { return symbol(sym.MAIN); }
 <YYINITIAL> "print"           { return symbol(sym.PRINT); }
 <YYINITIAL> "read"           { return symbol(sym.READ); }
+<YYINITIAL> "in"           { return symbol(sym.IN_SET); }
+
 
 /* boolean types */
 <YYINITIAL> "T"              { return symbol(sym.TRUE); }
 <YYINITIAL> "F"              { return symbol(sym.FALSE); }
+
 
 /* END KEYWORDS */
 
@@ -95,12 +98,15 @@ FloatLiteral = {DecIntegerLiteral} [.] {DecPositiveIntegerLiteral}
 
   /* literals */
   {DecIntegerLiteral}            { return symbol(sym.INTEGER_LITERAL); }
+  {RationalLiteral}            { return symbol(sym.RATIONAL_LITERAL); }
+  {FloatLiteral}            { return symbol(sym.FLOAT_LITERAL); }
+
   \"                             { string.setLength(0); yybegin(STRING); }
 
   /* math operators */
   "+"                            { return symbol(sym.PLUS); }
   "-"                           { return symbol(sym.MINUS); }
-  "*"                            { return symbol(sym.MULTIPLICATION); }
+  "*"                            { return symbol(sym.MULTI); }
   "/"                            { return symbol(sym.DIVISION); }
   "^"                           { return symbol(sym.POWER); }
 
@@ -116,6 +122,14 @@ FloatLiteral = {DecIntegerLiteral} [.] {DecPositiveIntegerLiteral}
   ">="                            { return symbol(sym.BIGGER_EQ); }
   "=="                            { return symbol(sym.EQUAL); }
   "!="                           { return symbol(sym.NOT_EQ); }
+
+  /* set operators */
+  "|"                            { return symbol(sym.SET_UNION); }
+  "&"                            { return symbol(sym.SET_INTSECT); }
+  "\"                           { return symbol(sym.SET_DIFF); }
+
+  /* seq operators */
+  "::"                            { return symbol(sym.SEQ_CONCAT); }
 
 
   /* comments */
