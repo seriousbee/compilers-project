@@ -1,0 +1,73 @@
+
+tests/open/p-fib.s
+Error: Could not find or load main class SC
+tests/open/p-thread.s
+Error: Could not find or load main class SC
+tests/open/n-alice.s
+Error: Could not find or load main class SC
+tests/open/p-forall.s
+Error: Could not find or load main class SC
+tests/open/p-while.s
+Error: Could not find or load main class SC
+tests/open/p-empty-adts.s
+Error: Could not find or load main class SC
+tests/open/p-if-then-else0.s
+Error: Could not find or load main class SC
+tests/open/n-decl.s
+Error: Could not find or load main class SC
+tests/open/n-main-missing-brace.s
+Error: Could not find or load main class SC
+tests/open/n-thread-no-init.s
+Error: Could not find or load main class SC
+tests/open/p-tdef.s
+Error: Could not find or load main class SC
+tests/open/n-fib.s
+Error: Could not find or load main class SC
+tests/open/p-alice.s
+Error: Could not find or load main class SC
+tests/open/n-no-main.s
+Error: Could not find or load main class SC
+tests/open/p-seq.s
+Error: Could not find or load main class SC
+tests/open/p-main-only.s
+Error: Could not find or load main class SC
+tests/open/p-reverse.s
+Error: Could not find or load main class SC
+tests/open/n-empty-main.s
+Error: Could not find or load main class SC
+tests/open/p-nested-func-decls.s
+Error: Could not find or load main class SC
+tests/open/n-stray-return.s
+Error: Could not find or load main class SC
+tests/open/p-two-func-if.s
+Error: Could not find or load main class SC
+tests/open/p-nested-while.s
+Error: Could not find or load main class SC
+tests/open/n-dict-unbalanced-open.s
+Error: Could not find or load main class SC
+tests/open/p-adt.s
+Error: Could not find or load main class SC
+tests/open/p-fp.s
+Error: Could not find or load main class SC
+tests/open/p-rat.s
+Error: Could not find or load main class SC
+tests/open/n-stray-elif.s
+Error: Could not find or load main class SC
+tests/open/p-elif.s
+Error: Could not find or load main class SC
+tests/open/p-nested-lambda-expression.s
+Error: Could not find or load main class SC
+tests/open/n-multiple-assignment.s
+Error: Could not find or load main class SC
+tests/open/n-type-stutter-in-plist.s
+Error: Could not find or load main class SC
+tests/open/n-type-in-expr.s
+Error: Could not find or load main class SC
+tests/open/n-empty-else.s
+Error: Could not find or load main class SC
+tests/open/p-set-ops.s
+Error: Could not find or load main class SC
+tests/open/n-func-param-type-error0.s
+Error: Could not find or load main class SC
+tests/open/p-func-decl-in-main.s
+Error: Could not find or load main class SC
