@@ -47,15 +47,9 @@ expr ::= expr PLUS expr
  ;
 
 
-/* Do I need to worry about int i = "abc" ???  */
 
  seq ::= L_TRI_PAREN type R_TRI_PAREN name
   | expr
-
-
- return ::= RETURN expr
-
-
 
  id ::= char
   | string
@@ -65,23 +59,40 @@ expr ::= expr PLUS expr
   | set
   | seq
   | user_defined_variable
+  | function_call
+  | array_call
 
- logic_expr ::= id comp_operator id
-  | function
+ logic_expr ::= id
+  | id comp_operator id
 
- function_call ::=
+ parameter_list ::= id
+  | id COMMA id
 
- compound_stmnt ::= WHILE L_SOFT_PAREN user_defined_variable IN expr R_SOFT_PAREN DO stmnt_list OD
+ array_literal ::= L_SQ_PAREN parameter_list R_SQ_PAREN
+
+ function_call ::= user_defined_variable  L_SOFT_PAREN parameter_list R_SOFT_PAREN
+
+ compound_stmnt ::= WHILE L_SOFT_PAREN user_defined_variable IN logic_expr R_SOFT_PAREN DO stmnt_list OD
   | FORALL expr DO stmt_list OD
-  | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list FI
-  | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list elif
-  | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list ELSE stmnt_list FI
-  | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list elif ELSE stmnt_list FI
+  | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list FI
+  | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif
+  | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list ELSE stmnt_list FI
+  | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif ELSE stmnt_list FI
 
- elif ::= ELIF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list FI
-  | ELIF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list elif
+ elif ::= ELIF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list FI
+  | ELIF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif
 
+ return ::= RETURN id
+ break ::= BREAK id
 
+ expr ::= id
+ | L_SOFT_PAREN expr R_SOFT_PAREN
+ | expr math_operator expr
+
+ assignment ::= user_defined_variable ASSIGN id
+  user_defined_variable ASSIGN expr
+
+ array_call = L_SQ_PAREN id R_SQ_PAREN
 
 
 /* Non terminals */
