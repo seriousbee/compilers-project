@@ -46,6 +46,10 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
 
 %%
 
+<YYINITIAL>“/#” {yybegin(COMMENT);}
+<COMMENT>“#/” {yybegin(YYINITIAL);}
+<COMMENT>. {}
+
 /* KEYWORDS */
 
 /* data types */
@@ -70,6 +74,8 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
 <YYINITIAL> "if"           { return symbol(sym.IF); }
 <YYINITIAL> "elif"              { return symbol(sym.ELIF); }
 <YYINITIAL> "else"              { return symbol(sym.ELSE); }
+<YYINITIAL> "fi"           { return symbol(sym.FI); }
+
 
 /* loops keywords */
 <YYINITIAL> "while"              { return symbol(sym.WHILE); }
@@ -123,8 +129,11 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
   /* set operators */
   "|"                            { return symbol(sym.SET_UNION); }
   "&"                            { return symbol(sym.SET_INTSECT); }
-  "\"                           { return symbol(sym.SET_DIFF); }
+  "\""                           { return symbol(sym.SET_DIFF); }
   "in"                             { return symbol(sym.IN_SET); }
+
+  ":="
+
 
 
   /* seq operators */

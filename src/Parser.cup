@@ -18,10 +18,71 @@ parser code {:
 
 :};
 
-terminal         SEMICOLON, COMMA, LPAR, RPAR, BEGIN, END,IF, ELSE, WHILE, READ, WRITE, BUNOP, ASSIGN;
-terminal Integer TYPE, BINOP, UNOP, COMP, BBINOP, INTCONST;
-terminal String  IDENT,STRINGCONST;
-terminal Boolean BOOLCONST;
+terminal PLUS, TIMES, LPAREN, RPAREN, ID, SEMI;
+non terminal expr_list, expr_stmt, expr;
+
+precedence left PLUS, MINUS;
+precedence left TIMES;
+precedence right POWER;
+precedence assosciative EQ;
+
+
+expr_list ::= expr_list expr_stmt
+ | expr_stmt
+ ;
+
+
+expr_stmt ::= expr SEMI
+ | error SEMI
+ ;
+
+
+expr ::= expr PLUS expr
+ | expr TIMES expr
+ | expr MINUS expr
+ | expr POWER expr
+ |
+ | LPAREN expr RPAREN
+ | ID
+ ;
+
+
+/* Do I need to worry about int i = "abc" ???  */
+
+ seq ::= L_TRI_PAREN type R_TRI_PAREN name
+  | expr
+
+
+ return ::= RETURN expr
+
+
+
+ id ::= char
+  | string
+  | float
+  | int
+  | rational
+  | set
+  | seq
+  | user_defined_variable
+
+ logic_expr ::= id comp_operator id
+  | function
+
+ function_call ::=
+
+ compound_stmnt ::= WHILE L_SOFT_PAREN user_defined_variable IN expr R_SOFT_PAREN DO stmnt_list OD
+  | FORALL expr DO stmt_list OD
+  | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list FI
+  | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list elif
+  | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list ELSE stmnt_list FI
+  | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list elif ELSE stmnt_list FI
+
+ elif ::= ELIF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list FI
+  | ELIF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list elif
+
+
+
 
 /* Non terminals */
 non terminal Program        program;
