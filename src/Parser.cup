@@ -46,10 +46,9 @@ expr ::= expr PLUS expr
  | ID
  ;
 
-
-
- seq ::= L_TRI_PAREN type R_TRI_PAREN name
-  | expr
+ uncheckable_id ::= user_defined_variable
+   | function_call
+   | array_call
 
  id ::= char
   | string
@@ -68,9 +67,12 @@ expr ::= expr PLUS expr
  parameter_list ::= id
   | id COMMA id
 
- array_literal ::= L_SQ_PAREN parameter_list R_SQ_PAREN
+ type_list ::= type
+  | type COMMA type
 
  function_call ::= user_defined_variable  L_SOFT_PAREN parameter_list R_SOFT_PAREN
+
+//Loops and Ifs
 
  compound_stmnt ::= WHILE L_SOFT_PAREN user_defined_variable IN logic_expr R_SOFT_PAREN DO stmnt_list OD
   | FORALL expr DO stmt_list OD
@@ -84,15 +86,47 @@ expr ::= expr PLUS expr
 
  return ::= RETURN id
  break ::= BREAK id
+  | BREAK
+
+statement ::= function_call
+ | compound_stmnt
+ | var_assignment
+ | seq_assignment
+ | dict_assignment
+ |
+
+
+//math expressions:
 
  expr ::= id
  | L_SOFT_PAREN expr R_SOFT_PAREN
  | expr math_operator expr
 
- assignment ::= user_defined_variable ASSIGN id
-  user_defined_variable ASSIGN expr
+//variables
 
- array_call = L_SQ_PAREN id R_SQ_PAREN
+ var_assignment ::= type user_defined_variable ASSIGN id
+  | user_defined_variable ASSIGN expr
+
+//TODO var_reassignment
+
+//sequences
+
+ seq_assignment ::= SEQ L_TRI_PAREN type R_TRI_PAREN user_defined_variable ASSIGN seq_literal
+  | L_TRI_PAREN type R_TRI_PAREN user_defined_variable ASSIGN expr
+
+ seq_literal ::= L_SQ_PAREN parameter_list R_SQ_PAREN
+
+ seq_call ::= L_SQ_PAREN id R_SQ_PAREN
+
+//dictionaries
+
+ dict_assignment ::= DICT L_TRI_PAREN type_list R_TRI_PAREN user_defined_variable ASSIGN dict_literal
+  | DICT L_TRI_PAREN type_list R_TRI_PAREN user_defined_variable ASSIGN expr
+
+ dict_literal ::= L_SOFT_PAREN dict_element_list R_SOFT_PAREN
+
+ dict_element_list ::= id COLON id
+  | id COLON id COMMA id COLON id
 
 
 /* Non terminals */
