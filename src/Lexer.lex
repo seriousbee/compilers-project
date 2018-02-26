@@ -54,6 +54,8 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
  "bool"            { return symbol(sym.BOOLEAN); }
  "top"              { return symbol(sym.TOP); }
  "void"              { return symbol(sym.VOID); }
+ "string"              { return symbol(sym.STRING_TYPE); }
+
 
 
 /* top-level keywords */
@@ -84,6 +86,7 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
  "main"              { return symbol(sym.MAIN); }
  "print"           { return symbol(sym.PRINT); }
  "read"           { return symbol(sym.READ); }
+ "print"           { return symbol(sym.PRINT); }
 
 
 /* boolean types */

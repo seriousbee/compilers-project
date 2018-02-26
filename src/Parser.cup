@@ -4,7 +4,7 @@ parser code {:
   public boolean syntaxErrors;
 
   public void syntax_error(Symbol current_token) {
-    syntaxErrors = true;
+    //syntaxErrors = true;
     report_error( "Syntax error at line " + (current_token.left+1) + ", column " + current_token.right + "\n", null);
   }
 
@@ -18,7 +18,7 @@ terminal L_SOFT_PAREN, L_TRI_PAREN, L_SQ_PAREN, L_CURL_PAREN;
 terminal R_SOFT_PAREN, R_TRI_PAREN, R_SQ_PAREN, R_CURL_PAREN;
 
 //types
-terminal INTEGER, RATIONAL, FLOAT, DICTIONARY, SEQUENCE, SET, BOOLEAN, TOP, VOID;
+terminal INTEGER, RATIONAL, FLOAT, DICTIONARY, SEQUENCE, SET, BOOLEAN, TOP, VOID, STRING_TYPE;
 
 //keywords
 terminal ALIAS, THREAD, FUN_DEF, FUNCTION, TYPE_DEF, RETURN;
@@ -53,49 +53,67 @@ terminal SEQ_CONCAT, LEN;
 terminal IDENTIFIER, INTEGER_LITERAL, RATIONAL_LITERAL, FLOAT_LITERAL, STRING_LITERAL, CHAR_LITERAL;
 
 //TOP LEVEL
-non terminal expr, expr_stmt, statement, compound_stmnt;
+non terminal expr, statement, compound_stmnt;
 
 non terminal main;
 
 //HELPERS
-non terminal id, uncheckable_id;
+non terminal id;
 
 //LIST
 non terminal id_list, type_list, stmnt_list;
 
-non terminal user_defined_variable, logic_expr, function_call, var_assignment;
+non terminal logic_expr, function_call, var_assignment;
 
 non terminal elif, return, break;
 
 non terminal tdef, var_list, single_var, array_call, comp_operator, type;
 
-non terminal seq_assignment, seq_literal, seq_call, dict_assignment, dict_literal, dict_element_list, thread_literal;
+non terminal seq_assignment, seq_literal, seq_call, dict_assignment, dict_literal, dict_element_list, thread_assignment;
 
-non terminal parameter_list, fdef;
+non terminal fdef;
 
-precedence left PLUS, MINUS;
-precedence left L_SOFT_PAREN, R_SOFT_PAREN, L_TRI_PAREN, R_TRI_PAREN, L_SQ_PAREN,R_SQ_PAREN, L_CURL_PAREN, R_CURL_PAREN;
+
+precedence left PLUS, MINUS, DIVISION, MULTI;
+precedence left L_SOFT_PAREN, R_SOFT_PAREN;
+precedence left L_TRI_PAREN, R_TRI_PAREN;
+precedence left L_SQ_PAREN, R_SQ_PAREN;
+precedence left L_CURL_PAREN, R_CURL_PAREN;
 precedence right POWER;
+precedence left ELSE;
+precedence left ELIF;
 
-user_defined_variable ::= IDENTIFIER;
+start with main;
 
-expr_stmt ::= expr SEMI
- ;
+main ::= MAIN L_CURL_PAREN stmnt_list R_CURL_PAREN SEMI;
 
-expr ::= expr PLUS expr
- | expr MULTI expr
- | expr MINUS expr
- | expr POWER expr
- | expr DIVISION expr
- | L_SOFT_PAREN expr R_SOFT_PAREN
- | user_defined_variable
- | id
- ;
+statement ::= function_call SEMI
+    | compound_stmnt
+    | var_assignment SEMI
+    | seq_assignment SEMI
+    | dict_assignment SEMI
+    | return SEMI
+    | break SEMI
+    | PRINT expr SEMI
+    ;
 
- uncheckable_id ::= user_defined_variable
-   | function_call
-   | array_call
-   ;
+expr ::= id //id contains IDENTIFIER
+    | expr PLUS expr
+    | expr MULTI expr
+    | expr MINUS expr
+    | expr POWER expr
+    | expr DIVISION expr
+    | L_SOFT_PAREN expr R_SOFT_PAREN
+    | READ SEMI
+    ;
+
+compound_stmnt ::= FORALL L_SOFT_PAREN IDENTIFIER IN id R_SOFT_PAREN DO stmnt_list OD
+    | WHILE logic_expr DO stmnt_list OD
+    | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list FI
+    | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif
+    | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list ELSE stmnt_list FI
+    | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif ELSE stmnt_list FI
+    ;
 
  id ::= CHAR_LITERAL
   | STRING_LITERAL
@@ -104,7 +122,7 @@ expr ::= expr PLUS expr
   | RATIONAL_LITERAL
 //  | set_literal
   | seq_literal
-  | user_defined_variable
+  | IDENTIFIER
   | function_call
   | array_call
   ;
@@ -121,8 +139,8 @@ expr ::= expr PLUS expr
   | id comp_operator id
   ;
 
- id_list ::= id
-  | id COMMA id
+ id_list ::= COMMA id
+  | COMMA id_list
   ;
 
  type ::= INTEGER
@@ -135,110 +153,78 @@ expr ::= expr PLUS expr
  | TOP
  | IDENTIFIER
  | VOID
+ | STRING_TYPE
  ;
 
  type_list ::= type
   | type_list COMMA type
   ;
 
-  statement ::= function_call SEMI
-   | compound_stmnt
-   | var_assignment SEMI
-   | seq_assignment SEMI
-   | dict_assignment SEMI
-   | return SEMI
-   | break SEMI
-   ;
-
   stmnt_list ::= statement
    | stmnt_list statement
    ;
 
- function_call ::= user_defined_variable  L_SOFT_PAREN id_list R_SOFT_PAREN;
-
-//Loops and Ifs
-
- compound_stmnt ::= FORALL L_SOFT_PAREN user_defined_variable IN id R_SOFT_PAREN DO stmnt_list OD
-  | WHILE expr DO stmnt_list OD
-  | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list FI
-  | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif
-  | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list ELSE stmnt_list FI
-  | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif ELSE stmnt_list FI
-  ;
+ function_call ::= IDENTIFIER L_SOFT_PAREN id_list R_SOFT_PAREN
+  | IDENTIFIER L_SOFT_PAREN id id_list R_SOFT_PAREN;
 
  elif ::= ELIF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list FI
   | ELIF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif
   ;
 
- return ::= RETURN expr;
+ return ::= RETURN expr
+  | RETURN
+  ;
+
  break ::= BREAK expr
   | BREAK
   ;
 
-parameter_list ::= type IDENTIFIER
- | parameter_list COMMA parameter_list
- ;
-
 //I can't enforce no return in void
-fdef ::= FUN_DEF type IDENTIFIER L_SOFT_PAREN parameter_list R_SOFT_PAREN L_CURL_PAREN stmnt_list R_CURL_PAREN SEMI;
-
-main ::= MAIN L_CURL_PAREN stmnt_list R_CURL_PAREN SEMI;
-
-//math expressions:
-
-//operator ::=
-/*
- math_expr ::= id
- | L_SOFT_PAREN expr R_SOFT_PAREN
- | expr operator expr
- ;
-*/
+fdef ::= FUN_DEF type IDENTIFIER L_SOFT_PAREN var_list R_SOFT_PAREN L_CURL_PAREN stmnt_list R_CURL_PAREN SEMI;
 
 
 //variables
 
- var_assignment ::= type user_defined_variable ASSIGN id
-  | user_defined_variable ASSIGN expr
+ var_assignment ::= type IDENTIFIER ASSIGN id
+  | IDENTIFIER ASSIGN expr
   ;
 
-// tdef
+  //TODO var_reassignment
+
 
 tdef ::= TYPE_DEF IDENTIFIER L_CURL_PAREN var_list R_CURL_PAREN;
 
-var_list ::= single_var
- | single_var COMMA single_var
+var_list ::= type IDENTIFIER
+ | var_list COMMA type IDENTIFIER
  ;
-
-single_var ::= type user_defined_variable;
-
 
 //TODO should user_defined_variable and user_defined_type be treated differently?
 
-//TODO var_reassignment
-
 //sequences
 
- seq_assignment ::= SEQUENCE L_TRI_PAREN type R_TRI_PAREN user_defined_variable ASSIGN seq_literal
-  | L_TRI_PAREN type R_TRI_PAREN user_defined_variable ASSIGN expr
+ seq_assignment ::= SEQUENCE L_TRI_PAREN type R_TRI_PAREN IDENTIFIER ASSIGN seq_literal
+  | L_TRI_PAREN type R_TRI_PAREN IDENTIFIER ASSIGN expr
   ;
 
- seq_literal ::= L_SQ_PAREN id_list R_SQ_PAREN;
+ seq_literal ::= L_SQ_PAREN id_list R_SQ_PAREN
+  | L_SQ_PAREN id id_list R_SQ_PAREN
+  ;
 
  seq_call ::= L_SQ_PAREN id R_SQ_PAREN;
 
 //dictionaries
 
- dict_assignment ::= DICTIONARY L_TRI_PAREN type_list R_TRI_PAREN user_defined_variable ASSIGN dict_literal
-  | DICTIONARY L_TRI_PAREN type_list R_TRI_PAREN user_defined_variable ASSIGN expr
+ dict_assignment ::= DICTIONARY L_TRI_PAREN type_list R_TRI_PAREN IDENTIFIER ASSIGN dict_literal
+  | DICTIONARY L_TRI_PAREN type_list R_TRI_PAREN IDENTIFIER ASSIGN expr
   ;
 
  dict_literal ::= L_SOFT_PAREN dict_element_list R_SOFT_PAREN;
 
  dict_element_list ::= id COLON id
-  | id COLON id COMMA id COLON id
+  | dict_element_list COMMA id COLON id
   ;
 
 //threads
- thread_literal ::= L_CURL_PAREN stmnt_list R_CURL_PAREN;
+ thread_assignment ::= THREAD id ASSIGN L_CURL_PAREN stmnt_list R_CURL_PAREN;
 
  array_call ::= L_SQ_PAREN expr R_SQ_PAREN;
