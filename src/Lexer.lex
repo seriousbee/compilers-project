@@ -53,6 +53,8 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
  "set"              { return symbol(sym.SET); }
  "bool"            { return symbol(sym.BOOLEAN); }
  "top"              { return symbol(sym.TOP); }
+ "void"              { return symbol(sym.VOID); }
+
 
 /* top-level keywords */
  "alias"           { return symbol(sym.ALIAS); }

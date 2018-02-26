@@ -18,7 +18,7 @@ terminal L_SOFT_PAREN, L_TRI_PAREN, L_SQ_PAREN, L_CURL_PAREN;
 terminal R_SOFT_PAREN, R_TRI_PAREN, R_SQ_PAREN, R_CURL_PAREN;
 
 //types
-terminal INTEGER, RATIONAL, FLOAT, DICTIONARY, SEQUENCE, SET, BOOLEAN, TOP;
+terminal INTEGER, RATIONAL, FLOAT, DICTIONARY, SEQUENCE, SET, BOOLEAN, TOP, VOID;
 
 //keywords
 terminal ALIAS, THREAD, FUN_DEF, FUNCTION, TYPE_DEF, RETURN;
@@ -55,6 +55,7 @@ terminal IDENTIFIER, INTEGER_LITERAL, RATIONAL_LITERAL, FLOAT_LITERAL, STRING_LI
 //TOP LEVEL
 non terminal expr, expr_stmt, statement, compound_stmnt;
 
+non terminal main;
 
 //HELPERS
 non terminal id, uncheckable_id;
@@ -70,6 +71,8 @@ non terminal tdef, var_list, single_var, array_call, comp_operator, type;
 
 non terminal seq_assignment, seq_literal, seq_call, dict_assignment, dict_literal, dict_element_list, thread_literal;
 
+non terminal parameter_list, fdef;
+
 precedence left PLUS, MINUS;
 precedence left L_SOFT_PAREN, R_SOFT_PAREN, L_TRI_PAREN, R_TRI_PAREN, L_SQ_PAREN,R_SQ_PAREN, L_CURL_PAREN, R_CURL_PAREN;
 precedence right POWER;
@@ -77,7 +80,6 @@ precedence right POWER;
 user_defined_variable ::= IDENTIFIER;
 
 expr_stmt ::= expr SEMI
- | error SEMI
  ;
 
 expr ::= expr PLUS expr
@@ -131,23 +133,25 @@ expr ::= expr PLUS expr
  | SET
  | BOOLEAN
  | TOP
+ | IDENTIFIER
+ | VOID
  ;
 
  type_list ::= type
-  | type COMMA type
+  | type_list COMMA type
   ;
 
-  statement ::= function_call
+  statement ::= function_call SEMI
    | compound_stmnt
-   | var_assignment
-   | seq_assignment
-   | dict_assignment
-   | return
-   | break
+   | var_assignment SEMI
+   | seq_assignment SEMI
+   | dict_assignment SEMI
+   | return SEMI
+   | break SEMI
    ;
 
   stmnt_list ::= statement
-   | statement statement
+   | stmnt_list statement
    ;
 
  function_call ::= user_defined_variable  L_SOFT_PAREN id_list R_SOFT_PAREN;
@@ -166,12 +170,19 @@ expr ::= expr PLUS expr
   | ELIF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif
   ;
 
- return ::= RETURN id;
- break ::= BREAK id
+ return ::= RETURN expr;
+ break ::= BREAK expr
   | BREAK
   ;
 
+parameter_list ::= type IDENTIFIER
+ | parameter_list COMMA parameter_list
+ ;
 
+//I can't enforce no return in void
+fdef ::= FUN_DEF type IDENTIFIER L_SOFT_PAREN parameter_list R_SOFT_PAREN L_CURL_PAREN stmnt_list R_CURL_PAREN SEMI;
+
+main ::= MAIN L_CURL_PAREN stmnt_list R_CURL_PAREN SEMI;
 
 //math expressions:
 
