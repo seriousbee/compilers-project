@@ -57,21 +57,18 @@ non terminal expr, statement, compound_stmnt;
 
 non terminal main;
 
-//HELPERS
-non terminal id;
-
 //LIST
-non terminal id_list, type_list, stmnt_list;
+non terminal expr_list, type_list, stmnt_list;
 
 non terminal logic_expr, function_call, var_assignment;
 
 non terminal elif, return, break;
 
-non terminal tdef, var_list, single_var, array_call, comp_operator, type;
+non terminal tdef, var_list, single_var, comp_operator, type;
 
 non terminal seq_assignment, seq_literal, seq_call, dict_assignment, dict_literal, dict_element_list, thread_assignment;
 
-non terminal fdef;
+non terminal fdef, starter;
 
 
 precedence left PLUS, MINUS, DIVISION, MULTI;
@@ -83,7 +80,17 @@ precedence right POWER;
 precedence left ELSE;
 precedence left ELIF;
 
-start with main;
+start with starter;
+
+starter ::= fdef starter
+ | tdef SEMI starter
+ | fdef SEMI starter
+ | var_assignment SEMI starter
+ | dict_assignment SEMI starter
+ | seq_assignment SEMI starter
+ | main
+ ;
+
 
 main ::= MAIN L_CURL_PAREN stmnt_list R_CURL_PAREN SEMI;
 
@@ -95,9 +102,11 @@ statement ::= function_call SEMI
     | return SEMI
     | break SEMI
     | PRINT expr SEMI
+    | tdef SEMI starter
+    | fdef SEMI starter
     ;
 
-expr ::= id //id contains IDENTIFIER
+expr ::= IDENTIFIER
     | expr PLUS expr
     | expr MULTI expr
     | expr MINUS expr
@@ -105,9 +114,17 @@ expr ::= id //id contains IDENTIFIER
     | expr DIVISION expr
     | L_SOFT_PAREN expr R_SOFT_PAREN
     | READ SEMI
+    | CHAR_LITERAL
+    | STRING_LITERAL
+    | FLOAT_LITERAL
+    | INTEGER_LITERAL
+    | RATIONAL_LITERAL
+    | seq_literal
+    | function_call
+    | seq_call
     ;
 
-compound_stmnt ::= FORALL L_SOFT_PAREN IDENTIFIER IN id R_SOFT_PAREN DO stmnt_list OD
+compound_stmnt ::= FORALL L_SOFT_PAREN IDENTIFIER IN expr R_SOFT_PAREN DO stmnt_list OD
     | WHILE logic_expr DO stmnt_list OD
     | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list FI
     | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif
@@ -115,17 +132,6 @@ compound_stmnt ::= FORALL L_SOFT_PAREN IDENTIFIER IN id R_SOFT_PAREN DO stmnt_li
     | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif ELSE stmnt_list FI
     ;
 
- id ::= CHAR_LITERAL
-  | STRING_LITERAL
-  | FLOAT_LITERAL
-  | INTEGER_LITERAL
-  | RATIONAL_LITERAL
-//  | set_literal
-  | seq_literal
-  | IDENTIFIER
-  | function_call
-  | array_call
-  ;
 
  comp_operator ::= SMALLER_EQ
  | BIGGER_EQ
@@ -135,12 +141,12 @@ compound_stmnt ::= FORALL L_SOFT_PAREN IDENTIFIER IN id R_SOFT_PAREN DO stmnt_li
  | R_TRI_PAREN
  ;
 
- logic_expr ::= id
-  | id comp_operator id
+ logic_expr ::= expr
+  | expr comp_operator expr
   ;
 
- id_list ::= COMMA id
-  | COMMA id_list
+ expr_list ::= COMMA expr
+  | COMMA expr_list
   ;
 
  type ::= INTEGER
@@ -164,8 +170,8 @@ compound_stmnt ::= FORALL L_SOFT_PAREN IDENTIFIER IN id R_SOFT_PAREN DO stmnt_li
    | stmnt_list statement
    ;
 
- function_call ::= IDENTIFIER L_SOFT_PAREN id_list R_SOFT_PAREN
-  | IDENTIFIER L_SOFT_PAREN id id_list R_SOFT_PAREN;
+ function_call ::= IDENTIFIER L_SOFT_PAREN expr R_SOFT_PAREN
+  | IDENTIFIER L_SOFT_PAREN expr expr_list R_SOFT_PAREN;
 
  elif ::= ELIF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list FI
   | ELIF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif
@@ -185,7 +191,7 @@ fdef ::= FUN_DEF type IDENTIFIER L_SOFT_PAREN var_list R_SOFT_PAREN L_CURL_PAREN
 
 //variables
 
- var_assignment ::= type IDENTIFIER ASSIGN id
+ var_assignment ::= type IDENTIFIER ASSIGN expr
   | IDENTIFIER ASSIGN expr
   ;
 
@@ -202,15 +208,13 @@ var_list ::= type IDENTIFIER
 
 //sequences
 
- seq_assignment ::= SEQUENCE L_TRI_PAREN type R_TRI_PAREN IDENTIFIER ASSIGN seq_literal
-  | L_TRI_PAREN type R_TRI_PAREN IDENTIFIER ASSIGN expr
+ seq_assignment ::= SEQUENCE L_TRI_PAREN type R_TRI_PAREN IDENTIFIER ASSIGN expr;
+
+//this definition looks messed up
+ seq_literal ::= L_SQ_PAREN expr expr_list R_SQ_PAREN
   ;
 
- seq_literal ::= L_SQ_PAREN id_list R_SQ_PAREN
-  | L_SQ_PAREN id id_list R_SQ_PAREN
-  ;
-
- seq_call ::= L_SQ_PAREN id R_SQ_PAREN;
+ seq_call ::= L_SQ_PAREN expr R_SQ_PAREN;
 
 //dictionaries
 
@@ -220,11 +224,9 @@ var_list ::= type IDENTIFIER
 
  dict_literal ::= L_SOFT_PAREN dict_element_list R_SOFT_PAREN;
 
- dict_element_list ::= id COLON id
-  | dict_element_list COMMA id COLON id
+ dict_element_list ::= expr COLON expr
+  | dict_element_list COMMA expr COLON expr
   ;
 
 //threads
- thread_assignment ::= THREAD id ASSIGN L_CURL_PAREN stmnt_list R_CURL_PAREN;
-
- array_call ::= L_SQ_PAREN expr R_SQ_PAREN;
+ thread_assignment ::= THREAD expr ASSIGN L_CURL_PAREN stmnt_list R_CURL_PAREN;
