@@ -3,8 +3,7 @@ tests/open/p-fib.s
 Syntax error at line 8, column 21
 Couldn't repair and continue parse at character 7 of input
 tests/open/p-thread.s
-Syntax error at line 2, column 4
-Couldn't repair and continue parse at character 1 of input
+parsing successful
 tests/open/n-alice.s
 Syntax error at line 2, column 0
 Couldn't repair and continue parse at character 1 of input
@@ -30,7 +29,7 @@ Exception in thread "main" java.lang.Error: Illegal character <#>
 	at java_cup.runtime.lr_parser.parse(lr_parser.java:693)
 	at SC.main(SC.java:15)
 tests/open/n-thread-no-init.s
-Syntax error at line 2, column 4
+Syntax error at line 2, column 13
 Couldn't repair and continue parse at character 1 of input
 tests/open/p-tdef.s
 Syntax error at line 2, column 1
@@ -48,8 +47,8 @@ tests/open/p-seq.s
 Syntax error at line 1, column 26
 Couldn't repair and continue parse at character 0 of input
 tests/open/p-main-only.s
-Syntax error at line 6, column 31
-Couldn't repair and continue parse at character 5 of input
+Syntax error at line 13, column 5
+Couldn't repair and continue parse at character 12 of input
 tests/open/p-reverse.s
 Syntax error at line 1, column 8
 Couldn't repair and continue parse at character 0 of input
@@ -63,8 +62,8 @@ tests/open/n-stray-return.s
 Syntax error at line 5, column 0
 Couldn't repair and continue parse at character 4 of input
 tests/open/p-two-func-if.s
-Syntax error at line 15, column 31
-Couldn't repair and continue parse at character 14 of input
+Syntax error at line 5, column 0
+Couldn't repair and continue parse at character 4 of input
 tests/open/p-nested-while.s
 Syntax error at line 2, column 20
 Couldn't repair and continue parse at character 1 of input
@@ -93,10 +92,10 @@ tests/open/p-nested-lambda-expression.s
 Syntax error at line 2, column 4
 Couldn't repair and continue parse at character 1 of input
 tests/open/n-multiple-assignment.s
-Syntax error at line 3, column 7
-Couldn't repair and continue parse at character 2 of input
+Syntax error at line 5, column 9
+Couldn't repair and continue parse at character 4 of input
 tests/open/n-type-stutter-in-plist.s
-Syntax error at line 5, column 29
+Syntax error at line 5, column 0
 Couldn't repair and continue parse at character 4 of input
 tests/open/n-type-in-expr.s
 Syntax error at line 3, column 12
@@ -111,5 +110,5 @@ tests/open/n-func-param-type-error0.s
 Syntax error at line 1, column 24
 Couldn't repair and continue parse at character 0 of input
 tests/open/p-func-decl-in-main.s
-Syntax error at line 11, column 2
-Couldn't repair and continue parse at character 10 of input
+Syntax error at line 5, column 0
+Couldn't repair and continue parse at character 4 of input

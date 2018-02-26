@@ -168,5 +168,7 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
   \\                             { string.append('\\'); }
 }
 
+//TODO: fix string definition
+
 /* error fallback */
 [^]                              { throw new Error("Illegal character <"+yytext()+">"); }
