@@ -124,9 +124,9 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
   "|"                            { return symbol(sym.SET_UNION); }
   "&"                            { return symbol(sym.SET_INTSECT); }
   "\""                           { return symbol(sym.SET_DIFF); }
-  "in"                             { return symbol(sym.IN_SET); }
+  "in"                             { return symbol(sym.IN); }
 
-  ":="                             { return symbol(sym.ASSIGNMENT); }
+  ":="                             { return symbol(sym.ASSIGN); }
   "("                             { return symbol(sym.L_SOFT_PAREN); }
   ")"                             { return symbol(sym.R_SOFT_PAREN); }
   "<"                            { return symbol(sym.L_TRI_PAREN); }
@@ -135,6 +135,11 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
   "]"                           { return symbol(sym.R_SQ_PAREN); }
   "{"                            { return symbol(sym.L_CURL_PAREN); }
   "}"                           { return symbol(sym.R_CURL_PAREN); }
+
+  ";"                           { return symbol(sym.SEMI); }
+  ":"                           { return symbol(sym.COLON); }
+
+  ","                           { return symbol(sym.COMMA); }
 
   /* seq operators */
   "::"                            { return symbol(sym.SEQ_CONCAT); }

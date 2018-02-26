@@ -1,9 +1,7 @@
 import java_cup.runtime.*;
-import java.util.*;
 
 parser code {:
   public boolean syntaxErrors;
-
 
   public void syntax_error(Symbol current_token) {
     syntaxErrors = true;
@@ -12,9 +10,8 @@ parser code {:
 
 :};
 
-
 //global operators
-terminal ASSIGNMENT;
+terminal ASSIGN, SEMI, COMMA, COLON;
 
 //parentases
 terminal L_SOFT_PAREN, L_TRI_PAREN, L_SQ_PAREN, L_CURL_PAREN;
@@ -48,115 +45,160 @@ terminal AND, NOT, OR;
 terminal SMALLER_EQ, BIGGER_EQ, EQUAL, NOT_EQ; //TODO: REMEMBER ABOUT < AND >!!!
 
 //set operations
-terminal SET_UNION, SET_INTSECT, SET_DIFF, IN_SET
+terminal SET_UNION, SET_INTSECT, SET_DIFF, IN;
 
 //seq operations
 terminal SEQ_CONCAT, LEN;
 
 terminal IDENTIFIER, INTEGER_LITERAL, RATIONAL_LITERAL, FLOAT_LITERAL, STRING_LITERAL, CHAR_LITERAL;
 
+//TOP LEVEL
+non terminal expr, expr_stmt, statement, compound_stmnt;
 
-non terminal expr_list, expr_stmt, expr;
+
+//HELPERS
+non terminal id, uncheckable_id;
+
+//LIST
+non terminal id_list, type_list, stmnt_list;
+
+non terminal user_defined_variable, logic_expr, function_call, var_assignment;
+
+non terminal elif, return, break;
+
+non terminal tdef, var_list, single_var, array_call, comp_operator, type;
+
+non terminal seq_assignment, seq_literal, seq_call, dict_assignment, dict_literal, dict_element_list, thread_literal;
 
 precedence left PLUS, MINUS;
-precedence left TIMES;
+precedence left L_SOFT_PAREN, R_SOFT_PAREN, L_TRI_PAREN, R_TRI_PAREN, L_SQ_PAREN,R_SQ_PAREN, L_CURL_PAREN, R_CURL_PAREN;
 precedence right POWER;
-precedence assosciative EQ;
 
-
-expr_list ::= expr_list expr_stmt
- | expr_stmt
- ;
-
+user_defined_variable ::= IDENTIFIER;
 
 expr_stmt ::= expr SEMI
  | error SEMI
  ;
 
-
 expr ::= expr PLUS expr
- | expr TIMES expr
+ | expr MULTI expr
  | expr MINUS expr
  | expr POWER expr
- |
- | LPAREN expr RPAREN
- | ID
+ | expr DIVISION expr
+ | L_SOFT_PAREN expr R_SOFT_PAREN
+ | user_defined_variable
+ | id
  ;
 
  uncheckable_id ::= user_defined_variable
    | function_call
    | array_call
+   ;
 
- id ::= char_literal
-  | string_literal
-  | float_literal
-  | int_literal
-  | rational_literal
-  | set_literal
+ id ::= CHAR_LITERAL
+  | STRING_LITERAL
+  | FLOAT_LITERAL
+  | INTEGER_LITERAL
+  | RATIONAL_LITERAL
+//  | set_literal
   | seq_literal
   | user_defined_variable
   | function_call
   | array_call
+  ;
+
+ comp_operator ::= SMALLER_EQ
+ | BIGGER_EQ
+ | EQUAL
+ | NOT_EQ
+ | L_TRI_PAREN
+ | R_TRI_PAREN
+ ;
 
  logic_expr ::= id
   | id comp_operator id
+  ;
 
  id_list ::= id
   | id COMMA id
+  ;
+
+ type ::= INTEGER
+ | RATIONAL
+ | FLOAT
+ | DICTIONARY
+ | SEQUENCE
+ | SET
+ | BOOLEAN
+ | TOP
+ ;
 
  type_list ::= type
   | type COMMA type
+  ;
 
- function_call ::= user_defined_variable  L_SOFT_PAREN id_list R_SOFT_PAREN
+  statement ::= function_call
+   | compound_stmnt
+   | var_assignment
+   | seq_assignment
+   | dict_assignment
+   | return
+   | break
+   ;
+
+  stmnt_list ::= statement
+   | statement statement
+   ;
+
+ function_call ::= user_defined_variable  L_SOFT_PAREN id_list R_SOFT_PAREN;
 
 //Loops and Ifs
 
  compound_stmnt ::= FORALL L_SOFT_PAREN user_defined_variable IN id R_SOFT_PAREN DO stmnt_list OD
-  | WHILE expr DO stmt_list OD
+  | WHILE expr DO stmnt_list OD
   | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list FI
   | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif
   | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list ELSE stmnt_list FI
   | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif ELSE stmnt_list FI
+  ;
 
  elif ::= ELIF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list FI
   | ELIF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif
+  ;
 
  return ::= RETURN id;
  break ::= BREAK id
   | BREAK
   ;
 
-statement ::= function_call
- | compound_stmnt
- | var_assignment
- | seq_assignment
- | dict_assignment
- | return
- | break
- ;
 
-stmnt_list ::= statement
- | statement statement
 
 //math expressions:
 
- expr ::= id
+//operator ::=
+/*
+ math_expr ::= id
  | L_SOFT_PAREN expr R_SOFT_PAREN
  | expr operator expr
+ ;
+*/
+
 
 //variables
 
  var_assignment ::= type user_defined_variable ASSIGN id
   | user_defined_variable ASSIGN expr
+  ;
 
 // tdef
 
-tdef ::= TDEF user_defined_type L_CURL_PAREN var_list R_CURL_PAREN
+tdef ::= TYPE_DEF IDENTIFIER L_CURL_PAREN var_list R_CURL_PAREN;
 
 var_list ::= single_var
  | single_var COMMA single_var
+ ;
 
-single_var ::= type user_defined_variable
+single_var ::= type user_defined_variable;
 
 
 //TODO should user_defined_variable and user_defined_type be treated differently?
@@ -165,72 +207,27 @@ single_var ::= type user_defined_variable
 
 //sequences
 
- seq_assignment ::= SEQ L_TRI_PAREN type R_TRI_PAREN user_defined_variable ASSIGN seq_literal
+ seq_assignment ::= SEQUENCE L_TRI_PAREN type R_TRI_PAREN user_defined_variable ASSIGN seq_literal
   | L_TRI_PAREN type R_TRI_PAREN user_defined_variable ASSIGN expr
+  ;
 
- seq_literal ::= L_SQ_PAREN id_list R_SQ_PAREN
+ seq_literal ::= L_SQ_PAREN id_list R_SQ_PAREN;
 
- seq_call ::= L_SQ_PAREN id R_SQ_PAREN
+ seq_call ::= L_SQ_PAREN id R_SQ_PAREN;
 
 //dictionaries
 
- dict_assignment ::= DICT L_TRI_PAREN type_list R_TRI_PAREN user_defined_variable ASSIGN dict_literal
-  | DICT L_TRI_PAREN type_list R_TRI_PAREN user_defined_variable ASSIGN expr
+ dict_assignment ::= DICTIONARY L_TRI_PAREN type_list R_TRI_PAREN user_defined_variable ASSIGN dict_literal
+  | DICTIONARY L_TRI_PAREN type_list R_TRI_PAREN user_defined_variable ASSIGN expr
+  ;
 
- dict_literal ::= L_SOFT_PAREN dict_element_list R_SOFT_PAREN
+ dict_literal ::= L_SOFT_PAREN dict_element_list R_SOFT_PAREN;
 
  dict_element_list ::= id COLON id
   | id COLON id COMMA id COLON id
+  ;
 
 //threads
- thread_literal ::= L_CURL_PAREN stmnt_list R_CURL_PAREN
+ thread_literal ::= L_CURL_PAREN stmnt_list R_CURL_PAREN;
 
-
-/* Precedences */
-precedence left PLUS, MINUS;
-precedence left TIMES;
-precedence left UMINUS;
-
-
-precedence left ELSE, UNOP, BINOP, BUNOP, BBINOP;
-
-program   ::=  decllist:d stmtlist:s                        {: RESULT = new Program(d,s); :}
-    ;
-decllist  ::=  decl:d decllist:dl                           {: dl.add(d); RESULT = dl; :}
-    | /* empty decllist */                                  {: RESULT = new LinkedList<Decl>(); :}
-    ;
-stmtlist  ::= stmtlist:sl stmt:s                            {: sl.add(s); RESULT = sl; :}
-    | /* empty stmtlist */                                  {: RESULT = new LinkedList<Stmt>(); :}
-    ;
-decl ::= TYPE IDENT:i identlist:il  SEMICOLON               {: il.add(0,Expr.ident(ixleft,i,ixright));
-                                                               RESULT = new Decl(il); :}
-    ;
-identlist  ::= identlist:il COMMA IDENT:i                   {: il.add(Expr.ident(ixleft,i,ixright)); RESULT = il; :}
-    | /* empty identlist*/                                  {: RESULT = new LinkedList<Expr.Identifier>(); :}
-    ;
-stmt ::= SEMICOLON                                          {: RESULT = Stmt.empty(); :}
-    | BEGIN stmtlist:sl END                                 {: RESULT = Stmt.compound(sl); :}
-    | IDENT:i ASSIGN expr:e SEMICOLON                       {: RESULT = Stmt.assign(ixleft,i,e,ixright); :}
-    | IDENT:i ASSIGN READ LPAR RPAR SEMICOLON               {: RESULT = Stmt.read(ixleft,i,ixright); :}
-    | IDENT:i ASSIGN READ LPAR STRINGCONST:s RPAR SEMICOLON {: RESULT = Stmt.read(ixleft,i,s,ixright); :}
-    | WRITE LPAR expr:e RPAR SEMICOLON                      {: RESULT = Stmt.write(e); :}
-    | WRITE LPAR STRINGCONST:s RPAR SEMICOLON               {: RESULT = Stmt.write(s); :}
-    | IF LPAR cond:c RPAR stmt:s                            {: RESULT = Stmt.ifthen(c,s); :}
-    | IF LPAR cond:c RPAR stmt:t ELSE stmt:e                {: RESULT = Stmt.ifthenelse(c,t,e); :}
-    | WHILE LPAR cond:c RPAR stmt:s                         {: RESULT = Stmt.whileloop(c,s); :}
-    | error:e                                               {: parser.report_error("Syntax error, skip rest",e); :}
-    ;
-cond ::= BOOLCONST:c                                        {: RESULT = Cond.boolconst(c); :}
-    | LPAR cond:c RPAR                                      {: RESULT = Cond.priority(c); :}
-    | expr:e1 COMP:op expr:e2                               {: RESULT = Cond.binop(e1,op,e2); :}
-    | BUNOP cond:c                                          {: RESULT = Cond.unop(c); :}
-    | cond:c1 BBINOP:op cond:c2                             {: RESULT = Cond.binop(c1,op,c2); :}
-    ;
-/* Yes, this grammar does not adhere to precedence of multiplication over addition                             */
-/* This is due to the fact that it is introduced with an ambiguous grammar in the lecture, and was never fixed */
-expr ::= IDENT:i                                            {: RESULT = Expr.ident(ixleft,i,ixright); :}
-    | INTCONST:c                                            {: RESULT = Expr.intconst(c); :}
-    | LPAR expr:e RPAR                                      {: RESULT = Expr.priority(e); :}
-    | BINOP expr:e                                          {: RESULT = Expr.unop(e); :}
-    | expr:e1 BINOP:op expr:e2                              {: RESULT = Expr.binop(e1,op,e2); :}
-    ;
+ array_call ::= L_SQ_PAREN expr R_SQ_PAREN;
