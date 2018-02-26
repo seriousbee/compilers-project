@@ -24,11 +24,7 @@ InputCharacter = [^\r\n]
 WhiteSpace     = {LineTerminator} | [ \t\f]
 
 /* comments */
-Comment = {TraditionalComment} | {EndOfLineComment}
-
-// Comment can be the last line of the file, without line terminator.
-EndOfLineComment     = "#" {InputCharacter}* {LineTerminator}?
-TraditionalComment   = "/#" [^#] ~"#/" | "/#" "#"+ "/"
+Comment = "(/\#([^#]|[\r\n]|(\#+([^#/]|[\r\n])))*\#+/)|(#.*)"
 
 Identifier = [:jletter:] ([:jletter:] | [:jletterdigit:] | [_])*
 
@@ -102,6 +98,7 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
   {DecIntegerLiteral}            { return symbol(sym.INTEGER_LITERAL); }
   {RationalLiteral}            { return symbol(sym.RATIONAL_LITERAL); }
   {FloatLiteral}            { return symbol(sym.FLOAT_LITERAL); }
+  {CharLiteral}            { return symbol(sym.CHAR_LITERAL); }
 
   \"                             { string.setLength(0); yybegin(STRING); }
 
@@ -159,18 +156,6 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
   \\r                            { string.append('\r'); }
   \\\"                           { string.append('\"'); }
   \\                             { string.append('\\'); }
-}
-
-<CHAR> {
-  \'                             { yybegin(YYINITIAL); return symbol(sym.CHAR_LITERAL, string.toString()); }
-  [^\n\r\"\\]+                   { string.append( yytext() ); }
-  \\t                            { string.append('\t'); }
-  \\n                            { string.append('\n'); }
-
-  \\r                            { string.append('\r'); }
-  \\\"                           { string.append('\"'); }
-  \\                             { string.append('\\'); }
-
 }
 
 /* error fallback */
