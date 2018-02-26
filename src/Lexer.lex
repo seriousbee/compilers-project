@@ -45,57 +45,56 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
 %state STRING
 
 %%
-
-<YYINITIAL>“/#” {yybegin(COMMENT);}
-<COMMENT>“#/” {yybegin(YYINITIAL);}
-<COMMENT>. {}
-
+<YYINITIAL> {
 /* KEYWORDS */
 
 /* data types */
-<YYINITIAL> "int"              { return symbol(sym.INTEGER); }
-<YYINITIAL> "rat"              { return symbol(sym.RATIONAL); }
-<YYINITIAL> "float"              { return symbol(sym.FLOAT); }
-<YYINITIAL> "dict"              { return symbol(sym.DICTIONARY); }
-<YYINITIAL> "seq"              { return symbol(sym.SEQUENCE); }
-<YYINITIAL> "set"              { return symbol(sym.SET); }
-<YYINITIAL> "bool"            { return symbol(sym.BOOLEAN); }
-<YYINITIAL> "top"              { return symbol(sym.TOP); }
+ "int"              { return symbol(sym.INTEGER); }
+ "rat"              { return symbol(sym.RATIONAL); }
+ "float"              { return symbol(sym.FLOAT); }
+ "dict"              { return symbol(sym.DICTIONARY); }
+ "seq"              { return symbol(sym.SEQUENCE); }
+ "set"              { return symbol(sym.SET); }
+ "bool"            { return symbol(sym.BOOLEAN); }
+ "top"              { return symbol(sym.TOP); }
 
 /* top-level keywords */
-<YYINITIAL> "alias"           { return symbol(sym.ALIAS); }
-<YYINITIAL> "thread"           { return symbol(sym.THREAD); }
-<YYINITIAL> "fdef"              { return symbol(sym.FUN_DEF); }
-<YYINITIAL> "function"              { return symbol(sym.FUNCTION); }
-<YYINITIAL> "tdef"              { return symbol(sym.TYPE_DEF); }
-<YYINITIAL> "return"              { return symbol(sym.RETURN); }
+ "alias"           { return symbol(sym.ALIAS); }
+ "thread"           { return symbol(sym.THREAD); }
+ "fdef"              { return symbol(sym.FUN_DEF); }
+ "function"              { return symbol(sym.FUNCTION); }
+ "tdef"              { return symbol(sym.TYPE_DEF); }
+ "return"              { return symbol(sym.RETURN); }
 
 /* conditional keywords */
-<YYINITIAL> "if"           { return symbol(sym.IF); }
-<YYINITIAL> "elif"              { return symbol(sym.ELIF); }
-<YYINITIAL> "else"              { return symbol(sym.ELSE); }
-<YYINITIAL> "fi"           { return symbol(sym.FI); }
+ "if"           { return symbol(sym.IF); }
+ "elif"              { return symbol(sym.ELIF); }
+ "else"              { return symbol(sym.ELSE); }
+ "fi"           { return symbol(sym.FI); }
+ "then"              { return symbol(sym.THEN); }
 
 
 /* loops keywords */
-<YYINITIAL> "while"              { return symbol(sym.WHILE); }
-<YYINITIAL> "forall"              { return symbol(sym.FORALL); }
-<YYINITIAL> "break"              { return symbol(sym.BREAK); }
+ "while"              { return symbol(sym.WHILE); }
+ "forall"              { return symbol(sym.FORALL); }
+ "break"              { return symbol(sym.BREAK); }
+ "do"              { return symbol(sym.DO); }
+ "od"              { return symbol(sym.OD); }
+
 
 /* built-in functions */
-<YYINITIAL> "main"              { return symbol(sym.MAIN); }
-<YYINITIAL> "print"           { return symbol(sym.PRINT); }
-<YYINITIAL> "read"           { return symbol(sym.READ); }
+ "main"              { return symbol(sym.MAIN); }
+ "print"           { return symbol(sym.PRINT); }
+ "read"           { return symbol(sym.READ); }
 
 
 /* boolean types */
-<YYINITIAL> "T"              { return symbol(sym.TRUE); }
-<YYINITIAL> "F"              { return symbol(sym.FALSE); }
-
+ "T"              { return symbol(sym.TRUE); }
+ "F"              { return symbol(sym.FALSE); }
 
 /* END KEYWORDS */
 
-<YYINITIAL> {
+
   /* identifiers */
   {Identifier}                   { return symbol(sym.IDENTIFIER); }
 
@@ -119,9 +118,7 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
   "||"                           { return symbol(sym.OR); }
 
   /* comparison operators */
-  "<"                            { return symbol(sym.SMALLER); }
   "<="                            { return symbol(sym.SMALLER_EQ); }
-  ">"                           { return symbol(sym.BIGGER); }
   ">="                            { return symbol(sym.BIGGER_EQ); }
   "=="                            { return symbol(sym.EQUAL); }
   "!="                           { return symbol(sym.NOT_EQ); }
@@ -132,9 +129,15 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
   "\""                           { return symbol(sym.SET_DIFF); }
   "in"                             { return symbol(sym.IN_SET); }
 
-  ":="
-
-
+  ":="                             { return symbol(sym.ASSIGNMENT); }
+  "("                             { return symbol(sym.L_SOFT_PAREN); }
+  ")"                             { return symbol(sym.R_SOFT_PAREN); }
+  "<"                            { return symbol(sym.L_TRI_PAREN); }
+  ">"                           { return symbol(sym.R_TRI_PAREN); }
+  "["                            { return symbol(sym.L_SQ_PAREN); }
+  "]"                           { return symbol(sym.R_SQ_PAREN); }
+  "{"                            { return symbol(sym.L_CURL_PAREN); }
+  "}"                           { return symbol(sym.R_CURL_PAREN); }
 
   /* seq operators */
   "::"                            { return symbol(sym.SEQ_CONCAT); }
@@ -148,9 +151,7 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
 }
 
 <STRING> {
-  \"                             { yybegin(YYINITIAL);
-                                   return symbol(sym.STRING_LITERAL,
-                                   string.toString()); }
+  \"                             { yybegin(YYINITIAL); return symbol(sym.STRING_LITERAL, string.toString()); }
   [^\n\r\"\\]+                   { string.append( yytext() ); }
   \\t                            { string.append('\t'); }
   \\n                            { string.append('\n'); }
@@ -158,6 +159,18 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
   \\r                            { string.append('\r'); }
   \\\"                           { string.append('\"'); }
   \\                             { string.append('\\'); }
+}
+
+<CHAR> {
+  \'                             { yybegin(YYINITIAL); return symbol(sym.CHAR_LITERAL, string.toString()); }
+  [^\n\r\"\\]+                   { string.append( yytext() ); }
+  \\t                            { string.append('\t'); }
+  \\n                            { string.append('\n'); }
+
+  \\r                            { string.append('\r'); }
+  \\\"                           { string.append('\"'); }
+  \\                             { string.append('\\'); }
+
 }
 
 /* error fallback */

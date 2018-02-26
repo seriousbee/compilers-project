@@ -4,21 +4,58 @@ import java.util.*;
 parser code {:
   public boolean syntaxErrors;
 
-  Lexer lexer;
-
-  public Parser(Lexer lex, ComplexSymbolFactory sf) {
-    super(lex,sf);
-    lexer = lex;
-  }
 
   public void syntax_error(Symbol current_token) {
     syntaxErrors = true;
-    report_error( "Syntax error at line " + (current_token.left+1) + ", column " + current_token.right, null);
+    report_error( "Syntax error at line " + (current_token.left+1) + ", column " + current_token.right + "\n", null);
   }
 
 :};
 
-terminal PLUS, TIMES, LPAREN, RPAREN, ID, SEMI;
+
+//global operators
+terminal ASSIGNMENT;
+
+//parentases
+terminal L_SOFT_PAREN, L_TRI_PAREN, L_SQ_PAREN, L_CURL_PAREN;
+terminal R_SOFT_PAREN, R_TRI_PAREN, R_SQ_PAREN, R_CURL_PAREN;
+
+//types
+terminal INTEGER, RATIONAL, FLOAT, DICTIONARY, SEQUENCE, SET, BOOLEAN, TOP;
+
+//keywords
+terminal ALIAS, THREAD, FUN_DEF, FUNCTION, TYPE_DEF, RETURN;
+
+//conditionals
+terminal IF, THEN, ELIF, ELSE, FI;
+
+//loops
+terminal WHILE, FORALL, DO, OD, BREAK;
+
+//built-in functions
+terminal MAIN, PRINT, READ;
+
+//booleans
+terminal TRUE, FALSE;
+
+//math
+terminal PLUS, MINUS, MULTI, DIVISION, POWER;
+
+//logic
+terminal AND, NOT, OR;
+
+//comparison
+terminal SMALLER_EQ, BIGGER_EQ, EQUAL, NOT_EQ; //TODO: REMEMBER ABOUT < AND >!!!
+
+//set operations
+terminal SET_UNION, SET_INTSECT, SET_DIFF, IN_SET
+
+//seq operations
+terminal SEQ_CONCAT, LEN;
+
+terminal IDENTIFIER, INTEGER_LITERAL, RATIONAL_LITERAL, FLOAT_LITERAL, STRING_LITERAL, CHAR_LITERAL;
+
+
 non terminal expr_list, expr_stmt, expr;
 
 precedence left PLUS, MINUS;
@@ -50,13 +87,13 @@ expr ::= expr PLUS expr
    | function_call
    | array_call
 
- id ::= char
-  | string
-  | float
-  | int
-  | rational
-  | set
-  | seq
+ id ::= char_literal
+  | string_literal
+  | float_literal
+  | int_literal
+  | rational_literal
+  | set_literal
+  | seq_literal
   | user_defined_variable
   | function_call
   | array_call
@@ -64,18 +101,18 @@ expr ::= expr PLUS expr
  logic_expr ::= id
   | id comp_operator id
 
- parameter_list ::= id
+ id_list ::= id
   | id COMMA id
 
  type_list ::= type
   | type COMMA type
 
- function_call ::= user_defined_variable  L_SOFT_PAREN parameter_list R_SOFT_PAREN
+ function_call ::= user_defined_variable  L_SOFT_PAREN id_list R_SOFT_PAREN
 
 //Loops and Ifs
 
- compound_stmnt ::= WHILE L_SOFT_PAREN user_defined_variable IN logic_expr R_SOFT_PAREN DO stmnt_list OD
-  | FORALL expr DO stmt_list OD
+ compound_stmnt ::= FORALL L_SOFT_PAREN user_defined_variable IN id R_SOFT_PAREN DO stmnt_list OD
+  | WHILE expr DO stmt_list OD
   | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list FI
   | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif
   | IF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list ELSE stmnt_list FI
@@ -84,28 +121,45 @@ expr ::= expr PLUS expr
  elif ::= ELIF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list FI
   | ELIF L_SOFT_PAREN logic_expr R_SOFT_PAREN THEN stmnt_list elif
 
- return ::= RETURN id
+ return ::= RETURN id;
  break ::= BREAK id
   | BREAK
+  ;
 
 statement ::= function_call
  | compound_stmnt
  | var_assignment
  | seq_assignment
  | dict_assignment
- |
+ | return
+ | break
+ ;
 
+stmnt_list ::= statement
+ | statement statement
 
 //math expressions:
 
  expr ::= id
  | L_SOFT_PAREN expr R_SOFT_PAREN
- | expr math_operator expr
+ | expr operator expr
 
 //variables
 
  var_assignment ::= type user_defined_variable ASSIGN id
   | user_defined_variable ASSIGN expr
+
+// tdef
+
+tdef ::= TDEF user_defined_type L_CURL_PAREN var_list R_CURL_PAREN
+
+var_list ::= single_var
+ | single_var COMMA single_var
+
+single_var ::= type user_defined_variable
+
+
+//TODO should user_defined_variable and user_defined_type be treated differently?
 
 //TODO var_reassignment
 
@@ -114,7 +168,7 @@ statement ::= function_call
  seq_assignment ::= SEQ L_TRI_PAREN type R_TRI_PAREN user_defined_variable ASSIGN seq_literal
   | L_TRI_PAREN type R_TRI_PAREN user_defined_variable ASSIGN expr
 
- seq_literal ::= L_SQ_PAREN parameter_list R_SQ_PAREN
+ seq_literal ::= L_SQ_PAREN id_list R_SQ_PAREN
 
  seq_call ::= L_SQ_PAREN id R_SQ_PAREN
 
@@ -128,16 +182,9 @@ statement ::= function_call
  dict_element_list ::= id COLON id
   | id COLON id COMMA id COLON id
 
+//threads
+ thread_literal ::= L_CURL_PAREN stmnt_list R_CURL_PAREN
 
-/* Non terminals */
-non terminal Program        program;
-non terminal List<Decl>     decllist;
-non terminal Decl           decl;
-non terminal List<Stmt>     stmtlist;
-non terminal List<Expr.Identifier>   identlist;
-non terminal Stmt           stmt;
-non terminal Expr           expr;
-non terminal Cond           cond;
 
 /* Precedences */
 precedence left PLUS, MINUS;
