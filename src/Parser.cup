@@ -152,6 +152,7 @@ expr ::= IDENTIFIER
     | TRUE
     | FALSE
     | L_SOFT_PAREN expr R_SOFT_PAREN
+    | L_SOFT_PAREN R_SOFT_PAREN
     ;
 
 main ::= MAIN L_CURL_PAREN statement stmnt_list R_CURL_PAREN;
@@ -218,8 +219,9 @@ property_call ::= expr DOT IDENTIFIER;
 
 //variables
 
- var_assignment ::= type IDENTIFIER ASSIGN expr
-  | IDENTIFIER ASSIGN expr
+ var_assignment ::= type IDENTIFIER ASSIGN expr expr_list
+  | IDENTIFIER ASSIGN expr expr_list
+  | property_call ASSIGN expr expr_list
   ;
 
 var_declaration ::= type IDENTIFIER;
@@ -250,6 +252,8 @@ seq_literal ::= L_SQ_PAREN R_SQ_PAREN
 
 seq_call ::= L_SQ_PAREN expr R_SQ_PAREN
     | L_SQ_PAREN expr R_SQ_PAREN seq_call
+    | L_SQ_PAREN expr COLON R_SQ_PAREN
+    | L_SQ_PAREN expr COLON R_SQ_PAREN seq_call
     ;
 
 set_assignment ::= SET L_TRI_PAREN type R_TRI_PAREN IDENTIFIER ASSIGN expr;
@@ -267,7 +271,7 @@ dict_literal ::= L_SOFT_PAREN expr COLON expr dict_element_list R_SOFT_PAREN
 
 alias ::= ALIAS type IDENTIFIER;
 
-lambda ::= FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER PIPE lambda_list ARROW L_CURL_PAREN statement stmnt_list R_CURL_PAREN
+lambda ::= FUNCTION IDENTIFIER ASSIGN lambda_list L_CURL_PAREN statement stmnt_list R_CURL_PAREN
  | FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER PIPE lambda_list ARROW expr
  ;
 
@@ -298,7 +302,7 @@ expr_list ::= COMMA expr_list_helper
     |
     ;
 
-lambda_list_helper ::= PIPE IDENTIFIER PIPE lambda_list;
-lambda_list ::= ARROW lambda_list_helper
+lambda_list_helper ::= PIPE IDENTIFIER PIPE ARROW lambda_list;
+lambda_list ::= lambda_list_helper
     |
     ;

@@ -11,13 +11,12 @@ parsing successful
 tests/open/p-while.s
 parsing successful
 tests/open/p-empty-adts.s
-Syntax error at line 2, column 22 )
-Couldn't repair and continue parse at character 1 of input
+parsing successful
 tests/open/p-if-then-else0.s
 parsing successful
 tests/open/n-decl.s
-Syntax error at line 2, column 22 )
-Couldn't repair and continue parse at character 1 of input
+Syntax error at line 6, column 14 :=
+Couldn't repair and continue parse at character 5 of input
 tests/open/n-main-missing-brace.s
 Syntax error at line 2, column 2 return
 Couldn't repair and continue parse at character 1 of input
@@ -35,8 +34,7 @@ tests/open/n-no-main.s
 Syntax error at line 0, column -1 null
 Couldn't repair and continue parse
 tests/open/p-seq.s
-Syntax error at line 11, column 40 ]
-Couldn't repair and continue parse at character 10 of input
+parsing successful
 tests/open/p-main-only.s
 parsing successful
 tests/open/p-reverse.s
@@ -57,8 +55,7 @@ tests/open/n-dict-unbalanced-open.s
 Syntax error at line 1, column 29 ,
 Couldn't repair and continue parse at character 0 of input
 tests/open/p-adt.s
-Syntax error at line 15, column 23 ,
-Couldn't repair and continue parse at character 14 of input
+parsing successful
 tests/open/p-fp.s
 parsing successful
 tests/open/p-rat.s
@@ -69,8 +66,7 @@ Couldn't repair and continue parse at character 3 of input
 tests/open/p-elif.s
 parsing successful
 tests/open/p-nested-lambda-expression.s
-Syntax error at line 2, column 34 {
-Couldn't repair and continue parse at character 1 of input
+parsing successful
 tests/open/n-multiple-assignment.s
 Syntax error at line 5, column 9 :=
 Couldn't repair and continue parse at character 4 of input
