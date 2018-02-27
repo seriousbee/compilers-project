@@ -12,7 +12,7 @@ import java_cup.runtime.*;
   StringBuffer string = new StringBuffer();
 
   private Symbol symbol(int type) {
-    return new Symbol(type, yyline, yycolumn);
+    return new Symbol(type, yyline, yycolumn, yytext());
   }
   private Symbol symbol(int type, Object value) {
     return new Symbol(type, yyline, yycolumn, value);
@@ -28,7 +28,7 @@ Comment = (\/\#([^#]|[\r\n]|(\#+([^#/]|[\r\n])))*\#+\/)|(#.*)
 
 Identifier = [a-zA-Z]([a-zA-Z_0-9]*)
 
-DecIntegerLiteral = 0|[-]?[1-9]([0-9]|[_])*
+DecIntegerLiteral = 0|[1-9]([0-9]|[_])*
 
 DecPositiveIntegerLiteral = 0|[1-9]([0-9]|[_])*
 
@@ -38,11 +38,8 @@ FloatLiteral = {DecIntegerLiteral}[.]{DecPositiveIntegerLiteral}
 
 CharLiteral = \'[!-9a-zA-Z]\'
 
-
 //source: https://stackoverflow.com/questions/2039795/regular-expression-for-a-string-literal-in-flex-lex
 StringLiteral = \"(\\.|[^\"\\])*\"
-
-
 
 %%
 <YYINITIAL> {

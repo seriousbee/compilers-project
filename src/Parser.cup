@@ -5,7 +5,7 @@ parser code {:
 
   public void syntax_error(Symbol current_token) {
     //syntaxErrors = true;
-    report_error( "Syntax error at line " + (current_token.left+1) + ", column " + current_token.right + "\n", null);
+    report_error( "Syntax error at line " + (current_token.left+1) + ", column " + current_token.right + " " + current_token.value + "\n", null);
   }
 
 :};
@@ -58,7 +58,7 @@ non terminal expr, statement, compound_stmnt;
 non terminal main;
 
 //LIST
-non terminal expr_list, type_list, stmnt_list;
+non terminal expr_list, type_list, stmnt_list, expr_list_helper, lambda_list_helper, var_list_helper, dict_element_list_helper, stmnt_list_helper, type_list_helper;
 
 non terminal function_call, var_assignment;
 
@@ -72,6 +72,8 @@ non terminal var_declaration, seq_declaration, dict_declaration, property_call;
 
 non terminal fdef, starter, alias, lambda, lambda_list;
 
+non terminal set_assignment, set_literal, set_declaration;
+
 
 precedence left PLUS, MINUS, DIVISION, MULTI;
 precedence left L_SOFT_PAREN, R_SOFT_PAREN;
@@ -81,23 +83,17 @@ precedence left L_CURL_PAREN, R_CURL_PAREN;
 precedence right POWER;
 precedence left ELSE;
 precedence left ELIF;
-precedence left BIGGER_EQ, EQUAL, SMALLER_EQ, NOT_EQ, AND, OR, DOT;
-precedence left SEQ_CONCAT, SET_INTSECT, PIPE, SET_DIFF, SET_UNION;
+precedence left BIGGER_EQ, EQUAL, SMALLER_EQ, NOT_EQ, AND, OR, DOT, IN;
+precedence left SEQ_CONCAT, SET_INTSECT, PIPE, SET_DIFF, SET_UNION, ARROW;
 
 start with starter;
 
 //TODO: Problems:
-    //comments: /# do something else #/
-    //function calls: return fibonacci(pos-1) + fibonacci(pos-2);
     //seq literal: seq<int> a := [1, 2, 3];
     //dict assignment: 	dict<int,int> x := ( );
-    //identifier? fdef foo( int pos ) {
-    //alias keyword + assignment: alias seq<char> string;
     //strings: string s1 := "Alice in Wonderland";, seq<string> l1 := ["a","b", "c", "d", "e"];
     //int literal? 	seq<int> a := [1, 2, 3];
-    //lambdas:     function mul := |a| -> |b| -> { return a * b; };
     //set keyword? + literals:     set<int> a := {0, 1, 2};
-    //support of ab[4].element
 
 starter ::= tdef SEMI starter
  | fdef SEMI starter
@@ -106,6 +102,8 @@ starter ::= tdef SEMI starter
  | seq_assignment SEMI starter
  | var_declaration SEMI starter
  | seq_declaration SEMI starter
+ | set_assignment SEMI starter
+ | set_declaration SEMI starter
  | dict_declaration SEMI starter
  | thread_assignment SEMI starter
  | alias SEMI starter
@@ -121,6 +119,8 @@ statement ::= function_call SEMI
     | seq_declaration SEMI
     | dict_assignment SEMI
     | dict_declaration SEMI
+    | set_assignment SEMI
+    | set_declaration SEMI
     | thread_assignment SEMI
     | return SEMI
     | break SEMI
@@ -143,21 +143,23 @@ expr ::= IDENTIFIER
     | RATIONAL_LITERAL
     | seq_literal
     | function_call
+    | set_literal
     | seq_call
     | dict_literal
     | property_call
     | TRUE
     | FALSE
+    | L_SOFT_PAREN expr R_SOFT_PAREN
     ;
 
-main ::= MAIN L_CURL_PAREN stmnt_list R_CURL_PAREN;
+main ::= MAIN L_CURL_PAREN statement stmnt_list R_CURL_PAREN;
 
-compound_stmnt ::= FORALL L_SOFT_PAREN IDENTIFIER IN expr R_SOFT_PAREN DO stmnt_list OD
-    | WHILE expr DO stmnt_list OD
-    | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list FI
-    | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list elif
-    | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list ELSE stmnt_list FI
-    | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list elif ELSE stmnt_list FI
+compound_stmnt ::= FORALL L_SOFT_PAREN expr R_SOFT_PAREN DO statement stmnt_list OD
+    | WHILE expr DO statement stmnt_list OD
+    | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN statement stmnt_list FI
+    | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN statement stmnt_list elif
+    | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN statement stmnt_list ELSE stmnt_list FI
+    | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN statement stmnt_list elif ELSE statement stmnt_list FI
     ;
 
 property_call ::= expr DOT IDENTIFIER;
@@ -180,14 +182,15 @@ property_call ::= expr DOT IDENTIFIER;
  | PIPE
  | SET_DIFF
  | SET_UNION
+ | IN
  ;
 
  type ::= INTEGER
  | RATIONAL
  | FLOAT
- | DICTIONARY
- | SEQUENCE
- | SET
+ | DICTIONARY L_TRI_PAREN type type_list R_TRI_PAREN
+ | SEQUENCE L_TRI_PAREN type type_list R_TRI_PAREN
+ | SET L_TRI_PAREN type R_TRI_PAREN
  | BOOLEAN
  | TOP
  | IDENTIFIER
@@ -196,12 +199,11 @@ property_call ::= expr DOT IDENTIFIER;
  ;
 
  function_call ::= IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN
-  | IDENTIFIER L_SOFT_PAREN expr R_SOFT_PAREN
   | IDENTIFIER L_SOFT_PAREN expr expr_list R_SOFT_PAREN
   ;
 
- elif ::= ELIF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list FI
-  | ELIF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list elif
+ elif ::= ELIF L_SOFT_PAREN expr R_SOFT_PAREN THEN statement stmnt_list FI
+  | ELIF L_SOFT_PAREN expr R_SOFT_PAREN THEN statement stmnt_list elif
   ;
 
  return ::= RETURN expr
@@ -220,62 +222,80 @@ property_call ::= expr DOT IDENTIFIER;
 
 var_declaration ::= type IDENTIFIER;
 
-fdef ::= FUN_DEF type IDENTIFIER L_SOFT_PAREN var_list R_SOFT_PAREN L_CURL_PAREN stmnt_list R_CURL_PAREN
-    | FUN_DEF type IDENTIFIER L_SOFT_PAREN var_list R_SOFT_PAREN L_CURL_PAREN R_CURL_PAREN
-    | FUN_DEF type IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN L_CURL_PAREN stmnt_list R_CURL_PAREN
+fdef ::= FUN_DEF type IDENTIFIER L_SOFT_PAREN type IDENTIFIER var_list R_SOFT_PAREN L_CURL_PAREN statement stmnt_list R_CURL_PAREN
+    | FUN_DEF type IDENTIFIER L_SOFT_PAREN type IDENTIFIER var_list R_SOFT_PAREN L_CURL_PAREN R_CURL_PAREN
+    | FUN_DEF type IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN L_CURL_PAREN statement stmnt_list R_CURL_PAREN
     | FUN_DEF type IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN L_CURL_PAREN R_CURL_PAREN;
 
 
-tdef ::= TYPE_DEF IDENTIFIER L_CURL_PAREN var_list R_CURL_PAREN;
-thread_assignment ::= THREAD IDENTIFIER ASSIGN L_CURL_PAREN stmnt_list R_CURL_PAREN
+tdef ::= TYPE_DEF IDENTIFIER L_CURL_PAREN type IDENTIFIER var_list R_CURL_PAREN
+    | TYPE_DEF IDENTIFIER L_CURL_PAREN R_CURL_PAREN;
+
+thread_assignment ::= THREAD IDENTIFIER ASSIGN L_CURL_PAREN statement stmnt_list R_CURL_PAREN
     | THREAD IDENTIFIER ASSIGN L_CURL_PAREN  R_CURL_PAREN;
 
 //sequences
 
-seq_assignment ::= SEQUENCE L_TRI_PAREN type R_TRI_PAREN IDENTIFIER ASSIGN expr;
-seq_declaration ::= SEQUENCE L_TRI_PAREN type R_TRI_PAREN IDENTIFIER;
+seq_assignment ::= SEQUENCE L_TRI_PAREN type type_list R_TRI_PAREN IDENTIFIER ASSIGN expr;
+seq_declaration ::= SEQUENCE L_TRI_PAREN type type_list R_TRI_PAREN IDENTIFIER;
 seq_literal ::= L_SQ_PAREN R_SQ_PAREN
     | L_SQ_PAREN expr expr_list R_SQ_PAREN
     ;
 
-seq_call ::= L_SQ_PAREN expr R_SQ_PAREN;
+seq_call ::= L_SQ_PAREN expr R_SQ_PAREN
+    | L_SQ_PAREN COLON expr R_SQ_PAREN
+    | L_SQ_PAREN expr COLON R_SQ_PAREN
+    | L_SQ_PAREN expr R_SQ_PAREN seq_call
+    | L_SQ_PAREN COLON expr R_SQ_PAREN seq_call
+    | L_SQ_PAREN expr COLON R_SQ_PAREN seq_call;
 
+set_assignment ::= SET L_TRI_PAREN type R_TRI_PAREN IDENTIFIER ASSIGN expr;
+set_declaration ::= SET L_TRI_PAREN type R_TRI_PAREN IDENTIFIER;
+set_literal ::= L_CURL_PAREN R_CURL_PAREN
+    | L_CURL_PAREN expr expr_list R_CURL_PAREN
+    ;
 
 //dictionaries
-dict_assignment ::= DICTIONARY L_TRI_PAREN type_list R_TRI_PAREN IDENTIFIER ASSIGN expr;
-dict_declaration ::= DICTIONARY L_TRI_PAREN type_list R_TRI_PAREN IDENTIFIER;
+dict_assignment ::= DICTIONARY L_TRI_PAREN type type_list R_TRI_PAREN IDENTIFIER ASSIGN expr;
+dict_declaration ::= DICTIONARY L_TRI_PAREN type type_list R_TRI_PAREN IDENTIFIER;
 
 dict_literal ::= L_SOFT_PAREN expr COLON expr dict_element_list R_SOFT_PAREN
     ;
 
 alias ::= ALIAS expr IDENTIFIER;
 
-lambda ::= FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER PIPE ARROW L_CURL_PAREN stmnt_list R_CURL_PAREN
- | FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER PIPE ARROW L_CURL_PAREN R_CURL_PAREN
- | FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER PIPE lambda_list ARROW L_CURL_PAREN stmnt_list R_CURL_PAREN
- | FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER PIPE lambda_list ARROW L_CURL_PAREN R_CURL_PAREN
+lambda ::= FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER PIPE lambda_list ARROW L_CURL_PAREN statement stmnt_list R_CURL_PAREN
+ | FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER PIPE lambda_list ARROW expr
  ;
 
+
 //LISTS
-type_list ::= type
-    | type_list COMMA type
+type_list_helper ::= type type_list;
+type_list ::= COMMA type_list_helper
+    |
     ;
 
-stmnt_list ::= statement
-    | stmnt_list statement
+stmnt_list_helper ::= statement stmnt_list;
+stmnt_list ::= stmnt_list_helper
+    |
     ;
 
-dict_element_list ::= expr COLON expr
-    | dict_element_list COMMA expr COLON expr
+dict_element_list_helper ::= expr COLON expr dict_element_list;
+dict_element_list ::= COMMA dict_element_list_helper
+    |
     ;
 
-var_list ::= type IDENTIFIER
-    | var_list COMMA type IDENTIFIER
+var_list_helper ::= type IDENTIFIER var_list;
+var_list ::= COMMA var_list_helper
+    |
     ;
 
-expr_list ::= COMMA expr
-    | COMMA expr_list
+expr_list_helper ::= expr expr_list;
+expr_list ::= COMMA expr_list_helper
+    |
     ;
-lambda_list ::= ARROW PIPE IDENTIFIER PIPE
-    | ARROW PIPE IDENTIFIER PIPE lambda_list
+
+lambda_list_helper ::= PIPE IDENTIFIER PIPE lambda_list;
+lambda_list ::= ARROW lambda_list_helper
+    |
     ;
