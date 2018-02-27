@@ -11,7 +11,7 @@ parser code {:
 :};
 
 //global operators
-terminal ASSIGN, SEMI, COMMA, COLON;
+terminal ASSIGN, SEMI, COMMA, COLON, DOT, PIPE, ARROW;
 
 //parentases
 terminal L_SOFT_PAREN, L_TRI_PAREN, L_SQ_PAREN, L_CURL_PAREN;
@@ -48,7 +48,7 @@ terminal SMALLER_EQ, BIGGER_EQ, EQUAL, NOT_EQ;
 terminal SET_UNION, SET_INTSECT, SET_DIFF, IN;
 
 //seq operations
-terminal SEQ_CONCAT, LEN;
+terminal SEQ_CONCAT;
 
 terminal IDENTIFIER, INTEGER_LITERAL, RATIONAL_LITERAL, FLOAT_LITERAL, STRING_LITERAL, CHAR_LITERAL;
 
@@ -64,13 +64,13 @@ non terminal function_call, var_assignment;
 
 non terminal elif, return, break;
 
-non terminal tdef, var_list, binary_operator, unary_operator, type;
+non terminal tdef, var_list, binary_operator, type;
 
 non terminal seq_assignment, seq_literal, seq_call, dict_assignment, dict_literal, dict_element_list, thread_assignment;
 
-non terminal var_declaration, seq_declaration, dict_declaration;
+non terminal var_declaration, seq_declaration, dict_declaration, property_call;
 
-non terminal fdef, starter;
+non terminal fdef, starter, alias, lambda, lambda_list;
 
 
 precedence left PLUS, MINUS, DIVISION, MULTI;
@@ -81,9 +81,23 @@ precedence left L_CURL_PAREN, R_CURL_PAREN;
 precedence right POWER;
 precedence left ELSE;
 precedence left ELIF;
-precedence left BIGGER_EQ, EQUAL, SMALLER_EQ, NOT_EQ, AND, OR;
+precedence left BIGGER_EQ, EQUAL, SMALLER_EQ, NOT_EQ, AND, OR, DOT;
+precedence left SEQ_CONCAT, SET_INTSECT, PIPE, SET_DIFF, SET_UNION;
 
 start with starter;
+
+//TODO: Problems:
+    //comments: /# do something else #/
+    //function calls: return fibonacci(pos-1) + fibonacci(pos-2);
+    //seq literal: seq<int> a := [1, 2, 3];
+    //dict assignment: 	dict<int,int> x := ( );
+    //identifier? fdef foo( int pos ) {
+    //alias keyword + assignment: alias seq<char> string;
+    //strings: string s1 := "Alice in Wonderland";, seq<string> l1 := ["a","b", "c", "d", "e"];
+    //int literal? 	seq<int> a := [1, 2, 3];
+    //lambdas:     function mul := |a| -> |b| -> { return a * b; };
+    //set keyword? + literals:     set<int> a := {0, 1, 2};
+    //support of ab[4].element
 
 starter ::= tdef SEMI starter
  | fdef SEMI starter
@@ -94,11 +108,10 @@ starter ::= tdef SEMI starter
  | seq_declaration SEMI starter
  | dict_declaration SEMI starter
  | thread_assignment SEMI starter
+ | alias SEMI starter
+ | lambda SEMI starter
  | main
  ;
-
-
-main ::= MAIN L_CURL_PAREN stmnt_list R_CURL_PAREN SEMI;
 
 statement ::= function_call SEMI
     | compound_stmnt
@@ -114,12 +127,14 @@ statement ::= function_call SEMI
     | PRINT expr SEMI
     | tdef SEMI
     | fdef SEMI
+    | alias SEMI
+    | lambda SEMI
     ;
 
 expr ::= IDENTIFIER
     | expr binary_operator expr
-    | unary_operator expr
-    | L_SOFT_PAREN expr R_SOFT_PAREN
+    | MINUS expr
+    | NOT expr
     | READ SEMI
     | CHAR_LITERAL
     | STRING_LITERAL
@@ -129,7 +144,14 @@ expr ::= IDENTIFIER
     | seq_literal
     | function_call
     | seq_call
+    | dict_literal
+    | property_call
+    | TRUE
+    | FALSE
     ;
+
+main ::= MAIN L_CURL_PAREN stmnt_list R_CURL_PAREN SEMI
+ | MAIN L_CURL_PAREN R_CURL_PAREN SEMI;
 
 compound_stmnt ::= FORALL L_SOFT_PAREN IDENTIFIER IN expr R_SOFT_PAREN DO stmnt_list OD
     | WHILE expr DO stmnt_list OD
@@ -139,6 +161,7 @@ compound_stmnt ::= FORALL L_SOFT_PAREN IDENTIFIER IN expr R_SOFT_PAREN DO stmnt_
     | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list elif ELSE stmnt_list FI
     ;
 
+property_call ::= expr DOT IDENTIFIER;
 
  binary_operator ::= SMALLER_EQ
  | BIGGER_EQ
@@ -153,15 +176,12 @@ compound_stmnt ::= FORALL L_SOFT_PAREN IDENTIFIER IN expr R_SOFT_PAREN DO stmnt_
  | DIVISION
  | OR
  | AND
+ | SEQ_CONCAT
+ | SET_INTSECT
+ | PIPE
+ | SET_DIFF
+ | SET_UNION
  ;
-
- unary_operator ::= NOT
- | MINUS
- ;
-
- expr_list ::= COMMA expr
-  | COMMA expr_list
-  ;
 
  type ::= INTEGER
  | RATIONAL
@@ -176,16 +196,7 @@ compound_stmnt ::= FORALL L_SOFT_PAREN IDENTIFIER IN expr R_SOFT_PAREN DO stmnt_
  | STRING_TYPE
  ;
 
- type_list ::= type
-  | type_list COMMA type
-  ;
-
-  stmnt_list ::= statement
-   | stmnt_list statement
-   ;
-
- function_call ::= IDENTIFIER L_SOFT_PAREN expr R_SOFT_PAREN
-  | IDENTIFIER L_SOFT_PAREN expr expr_list R_SOFT_PAREN;
+ function_call ::= IDENTIFIER seq_literal;
 
  elif ::= ELIF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list FI
   | ELIF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list elif
@@ -199,50 +210,67 @@ compound_stmnt ::= FORALL L_SOFT_PAREN IDENTIFIER IN expr R_SOFT_PAREN DO stmnt_
   | BREAK
   ;
 
-//I can't enforce no return in void
-fdef ::= FUN_DEF type IDENTIFIER L_SOFT_PAREN var_list R_SOFT_PAREN L_CURL_PAREN stmnt_list R_CURL_PAREN SEMI;
-
-
 //variables
 
  var_assignment ::= type IDENTIFIER ASSIGN expr
   | IDENTIFIER ASSIGN expr
   ;
 
- var_declaration ::= type IDENTIFIER;
+var_declaration ::= type IDENTIFIER;
 
-
+fdef ::= FUN_DEF type IDENTIFIER L_SOFT_PAREN var_list R_SOFT_PAREN L_CURL_PAREN stmnt_list R_CURL_PAREN SEMI
+    | FUN_DEF type IDENTIFIER L_SOFT_PAREN var_list R_SOFT_PAREN L_CURL_PAREN R_CURL_PAREN SEMI;
 tdef ::= TYPE_DEF IDENTIFIER L_CURL_PAREN var_list R_CURL_PAREN;
-
-var_list ::= type IDENTIFIER
- | var_list COMMA type IDENTIFIER
- ;
-
-//TODO should user_defined_variable and user_defined_type be treated differently?
+thread_assignment ::= THREAD IDENTIFIER ASSIGN L_CURL_PAREN stmnt_list R_CURL_PAREN
+    | THREAD IDENTIFIER ASSIGN L_CURL_PAREN  R_CURL_PAREN;
 
 //sequences
 
- seq_assignment ::= SEQUENCE L_TRI_PAREN type R_TRI_PAREN IDENTIFIER ASSIGN expr;
- seq_declaration ::= SEQUENCE L_TRI_PAREN type R_TRI_PAREN IDENTIFIER;
+seq_assignment ::= SEQUENCE L_TRI_PAREN type R_TRI_PAREN IDENTIFIER ASSIGN expr;
+seq_declaration ::= SEQUENCE L_TRI_PAREN type R_TRI_PAREN IDENTIFIER;
+seq_literal ::= L_SOFT_PAREN R_SOFT_PAREN
+    | L_SOFT_PAREN expr R_SOFT_PAREN
+    | L_SOFT_PAREN expr expr_list R_SOFT_PAREN
+    ;
 
-//this definition looks messed up
- seq_literal ::= L_SQ_PAREN expr expr_list R_SQ_PAREN
-  ;
+seq_call ::= L_SQ_PAREN expr R_SQ_PAREN;
 
- seq_call ::= L_SQ_PAREN expr R_SQ_PAREN;
 
 //dictionaries
+dict_assignment ::= DICTIONARY L_TRI_PAREN type_list R_TRI_PAREN IDENTIFIER ASSIGN expr;
+dict_declaration ::= DICTIONARY L_TRI_PAREN type_list R_TRI_PAREN IDENTIFIER;
 
- dict_assignment ::= DICTIONARY L_TRI_PAREN type_list R_TRI_PAREN IDENTIFIER ASSIGN dict_literal
-  | DICTIONARY L_TRI_PAREN type_list R_TRI_PAREN IDENTIFIER ASSIGN expr
-  ;
-  dict_declaration ::= DICTIONARY L_TRI_PAREN type_list R_TRI_PAREN IDENTIFIER;
+dict_literal ::= L_SOFT_PAREN expr COLON expr dict_element_list R_SOFT_PAREN
+    ;
 
- dict_literal ::= L_SOFT_PAREN dict_element_list R_SOFT_PAREN;
+alias ::= ALIAS expr IDENTIFIER;
 
- dict_element_list ::= expr COLON expr
-  | dict_element_list COMMA expr COLON expr
-  ;
+lambda ::= FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER PIPE ARROW L_CURL_PAREN stmnt_list R_CURL_PAREN
+ | FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER PIPE ARROW L_CURL_PAREN R_CURL_PAREN
+ | FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER PIPE lambda_list ARROW L_CURL_PAREN stmnt_list R_CURL_PAREN
+ | FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER PIPE lambda_list ARROW L_CURL_PAREN R_CURL_PAREN
+ ;
 
-//threads
- thread_assignment ::= THREAD IDENTIFIER ASSIGN L_CURL_PAREN stmnt_list R_CURL_PAREN;
+//LISTS
+type_list ::= type
+    | type_list COMMA type
+    ;
+
+stmnt_list ::= statement
+    | stmnt_list statement
+    ;
+
+dict_element_list ::= expr COLON expr
+    | dict_element_list COMMA expr COLON expr
+    ;
+
+var_list ::= type IDENTIFIER
+    | var_list COMMA type IDENTIFIER
+    ;
+
+expr_list ::= COMMA expr
+    | COMMA expr_list
+    ;
+lambda_list ::= ARROW PIPE IDENTIFIER PIPE
+    | ARROW PIPE IDENTIFIER PIPE lambda_list
+    ;

@@ -24,7 +24,7 @@ InputCharacter = [^\r\n]
 WhiteSpace     = {LineTerminator} | [ \t\f]
 
 /* comments */
-Comment = "(/\#([^#]|[\r\n]|(\#+([^#/]|[\r\n])))*\#+/)|(#.*)"
+Comment = (\/\#([^#]|[\r\n]|(\#+([^#/]|[\r\n])))*\#+\/)|(#.*)
 
 Identifier = [:jletter:] ([:jletter:] | [:jletterdigit:] | [_])*
 
@@ -38,7 +38,11 @@ FloatLiteral = {DecIntegerLiteral} [.] {DecPositiveIntegerLiteral}
 
 CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
 
-%state STRING
+
+//source: https://stackoverflow.com/questions/2039795/regular-expression-for-a-string-literal-in-flex-lex
+StringLiteral = \"(\\.|[^\"\\])*\"
+
+
 
 %%
 <YYINITIAL> {
@@ -104,8 +108,7 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
   {RationalLiteral}            { return symbol(sym.RATIONAL_LITERAL); }
   {FloatLiteral}            { return symbol(sym.FLOAT_LITERAL); }
   {CharLiteral}            { return symbol(sym.CHAR_LITERAL); }
-
-  \"                             { string.setLength(0); yybegin(STRING); }
+  {StringLiteral}             { return symbol(sym.STRING_LITERAL); }
 
   /* math operators */
   "+"                            { return symbol(sym.PLUS); }
@@ -126,7 +129,7 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
   "!="                           { return symbol(sym.NOT_EQ); }
 
   /* set operators */
-  "|"                            { return symbol(sym.SET_UNION); }
+  "|"                            { return symbol(sym.PIPE); }
   "&"                            { return symbol(sym.SET_INTSECT); }
   "\""                           { return symbol(sym.SET_DIFF); }
   "in"                             { return symbol(sym.IN); }
@@ -145,10 +148,12 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
   ":"                           { return symbol(sym.COLON); }
 
   ","                           { return symbol(sym.COMMA); }
+  "."                           { return symbol(sym.DOT); }
+  "->"                           { return symbol(sym.ARROW); }
+
 
   /* seq operators */
   "::"                            { return symbol(sym.SEQ_CONCAT); }
-  "len"                             { return symbol(sym.SEQ_LEN); }
 
   /* comments */
   {Comment}                      { /* ignore */ }
@@ -156,19 +161,6 @@ CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
   /* whitespace */
   {WhiteSpace}                   { /* ignore */ }
 }
-
-<STRING> {
-  \"                             { yybegin(YYINITIAL); return symbol(sym.STRING_LITERAL, string.toString()); }
-  [^\n\r\"\\]+                   { string.append( yytext() ); }
-  \\t                            { string.append('\t'); }
-  \\n                            { string.append('\n'); }
-
-  \\r                            { string.append('\r'); }
-  \\\"                           { string.append('\"'); }
-  \\                             { string.append('\\'); }
-}
-
-//TODO: fix string definition
 
 /* error fallback */
 [^]                              { throw new Error("Illegal character <"+yytext()+">"); }

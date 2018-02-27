@@ -6,75 +6,77 @@
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int FORALL = 36;
-  public static final int STRING_LITERAL = 67;
-  public static final int FUNCTION = 27;
-  public static final int BIGGER_EQ = 54;
-  public static final int POWER = 49;
-  public static final int TYPE_DEF = 28;
-  public static final int CHAR_LITERAL = 68;
-  public static final int L_CURL_PAREN = 9;
-  public static final int INTEGER = 14;
-  public static final int R_SQ_PAREN = 12;
+  public static final int FORALL = 39;
+  public static final int STRING_LITERAL = 69;
+  public static final int FUNCTION = 30;
+  public static final int BIGGER_EQ = 57;
+  public static final int POWER = 52;
+  public static final int TYPE_DEF = 31;
+  public static final int CHAR_LITERAL = 70;
+  public static final int L_CURL_PAREN = 12;
+  public static final int INTEGER = 17;
+  public static final int R_SQ_PAREN = 15;
   public static final int SEMI = 3;
-  public static final int R_SOFT_PAREN = 10;
-  public static final int MINUS = 46;
-  public static final int NOT = 51;
-  public static final int AND = 50;
-  public static final int L_TRI_PAREN = 7;
-  public static final int SEQ_CONCAT = 61;
-  public static final int RATIONAL = 15;
-  public static final int IN = 60;
-  public static final int OR = 52;
+  public static final int R_SOFT_PAREN = 13;
+  public static final int MINUS = 49;
+  public static final int NOT = 54;
+  public static final int AND = 53;
+  public static final int L_TRI_PAREN = 10;
+  public static final int SEQ_CONCAT = 64;
+  public static final int RATIONAL = 18;
+  public static final int IN = 63;
+  public static final int OR = 55;
   public static final int COMMA = 4;
-  public static final int FI = 34;
-  public static final int THREAD = 25;
-  public static final int R_CURL_PAREN = 13;
-  public static final int PLUS = 45;
-  public static final int MAIN = 40;
+  public static final int FI = 37;
+  public static final int THREAD = 28;
+  public static final int R_CURL_PAREN = 16;
+  public static final int PLUS = 48;
+  public static final int MAIN = 43;
   public static final int ASSIGN = 2;
-  public static final int IF = 30;
+  public static final int IF = 33;
+  public static final int DOT = 6;
   public static final int EOF = 0;
-  public static final int BOOLEAN = 20;
-  public static final int OD = 38;
-  public static final int RETURN = 29;
-  public static final int EQUAL = 55;
-  public static final int TRUE = 43;
-  public static final int DICTIONARY = 17;
-  public static final int STRING_TYPE = 23;
+  public static final int BOOLEAN = 23;
+  public static final int OD = 41;
+  public static final int RETURN = 32;
+  public static final int EQUAL = 58;
+  public static final int TRUE = 46;
+  public static final int DICTIONARY = 20;
+  public static final int STRING_TYPE = 26;
   public static final int error = 1;
-  public static final int SET_INTSECT = 58;
-  public static final int FUN_DEF = 26;
-  public static final int BREAK = 39;
-  public static final int RATIONAL_LITERAL = 65;
-  public static final int VOID = 22;
-  public static final int TOP = 21;
+  public static final int PIPE = 7;
+  public static final int SET_INTSECT = 61;
+  public static final int FUN_DEF = 29;
+  public static final int BREAK = 42;
+  public static final int RATIONAL_LITERAL = 67;
+  public static final int VOID = 25;
+  public static final int TOP = 24;
+  public static final int ARROW = 8;
   public static final int COLON = 5;
-  public static final int SET_UNION = 57;
-  public static final int ELSE = 33;
-  public static final int READ = 42;
-  public static final int NOT_EQ = 56;
-  public static final int WHILE = 35;
-  public static final int FLOAT = 16;
-  public static final int THEN = 31;
-  public static final int MULTI = 47;
-  public static final int LEN = 62;
-  public static final int ALIAS = 24;
-  public static final int SEQUENCE = 18;
-  public static final int FLOAT_LITERAL = 66;
-  public static final int SET_DIFF = 59;
-  public static final int FALSE = 44;
-  public static final int DIVISION = 48;
-  public static final int R_TRI_PAREN = 11;
-  public static final int SMALLER_EQ = 53;
-  public static final int L_SQ_PAREN = 8;
-  public static final int ELIF = 32;
-  public static final int PRINT = 41;
-  public static final int DO = 37;
-  public static final int SET = 19;
-  public static final int L_SOFT_PAREN = 6;
-  public static final int INTEGER_LITERAL = 64;
-  public static final int IDENTIFIER = 63;
+  public static final int SET_UNION = 60;
+  public static final int ELSE = 36;
+  public static final int READ = 45;
+  public static final int NOT_EQ = 59;
+  public static final int WHILE = 38;
+  public static final int FLOAT = 19;
+  public static final int THEN = 34;
+  public static final int MULTI = 50;
+  public static final int ALIAS = 27;
+  public static final int SEQUENCE = 21;
+  public static final int FLOAT_LITERAL = 68;
+  public static final int SET_DIFF = 62;
+  public static final int FALSE = 47;
+  public static final int DIVISION = 51;
+  public static final int R_TRI_PAREN = 14;
+  public static final int SMALLER_EQ = 56;
+  public static final int L_SQ_PAREN = 11;
+  public static final int ELIF = 35;
+  public static final int PRINT = 44;
+  public static final int DO = 40;
+  public static final int SET = 22;
+  public static final int L_SOFT_PAREN = 9;
+  public static final int INTEGER_LITERAL = 66;
+  public static final int IDENTIFIER = 65;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -82,6 +84,9 @@ public class sym {
   "SEMI",
   "COMMA",
   "COLON",
+  "DOT",
+  "PIPE",
+  "ARROW",
   "L_SOFT_PAREN",
   "L_TRI_PAREN",
   "L_SQ_PAREN",
@@ -138,7 +143,6 @@ public class sym {
   "SET_DIFF",
   "IN",
   "SEQ_CONCAT",
-  "LEN",
   "IDENTIFIER",
   "INTEGER_LITERAL",
   "RATIONAL_LITERAL",
