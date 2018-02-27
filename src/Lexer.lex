@@ -55,8 +55,6 @@ StringLiteral = \"(\\.|[^\"\\])*\"
  "bool"            { return symbol(sym.BOOLEAN); }
  "top"              { return symbol(sym.TOP); }
  "void"              { return symbol(sym.VOID); }
- "string"              { return symbol(sym.STRING_TYPE); }
-
 
 
 /* top-level keywords */
@@ -81,6 +79,7 @@ StringLiteral = \"(\\.|[^\"\\])*\"
  "break"              { return symbol(sym.BREAK); }
  "do"              { return symbol(sym.DO); }
  "od"              { return symbol(sym.OD); }
+  "in"                             { return symbol(sym.IN); }
 
 
 /* built-in functions */
@@ -128,8 +127,7 @@ StringLiteral = \"(\\.|[^\"\\])*\"
   /* set operators */
   "|"                            { return symbol(sym.PIPE); }
   "&"                            { return symbol(sym.SET_INTSECT); }
-  "\""                           { return symbol(sym.SET_DIFF); }
-  "in"                             { return symbol(sym.IN); }
+  "\\"                           { return symbol(sym.SET_DIFF); }
 
   ":="                             { return symbol(sym.ASSIGN); }
   "("                             { return symbol(sym.L_SOFT_PAREN); }

@@ -18,7 +18,7 @@ terminal L_SOFT_PAREN, L_TRI_PAREN, L_SQ_PAREN, L_CURL_PAREN;
 terminal R_SOFT_PAREN, R_TRI_PAREN, R_SQ_PAREN, R_CURL_PAREN;
 
 //types
-terminal INTEGER, RATIONAL, FLOAT, DICTIONARY, SEQUENCE, SET, BOOLEAN, TOP, VOID, STRING_TYPE;
+terminal INTEGER, RATIONAL, FLOAT, DICTIONARY, SEQUENCE, SET, BOOLEAN, TOP, VOID;
 
 //keywords
 terminal ALIAS, THREAD, FUN_DEF, FUNCTION, TYPE_DEF, RETURN;
@@ -84,7 +84,7 @@ precedence right POWER;
 precedence left ELSE;
 precedence left ELIF;
 precedence left BIGGER_EQ, EQUAL, SMALLER_EQ, NOT_EQ, AND, OR, DOT, IN;
-precedence left SEQ_CONCAT, SET_INTSECT, PIPE, SET_DIFF, SET_UNION, ARROW;
+precedence left SEQ_CONCAT, SET_INTSECT, PIPE, SET_DIFF, SET_UNION, ARROW, COLON;
 
 start with starter;
 
@@ -134,7 +134,9 @@ statement ::= function_call SEMI
 expr ::= IDENTIFIER
     | expr binary_operator expr
     | MINUS expr
+    | PLUS expr
     | NOT expr
+    | COLON expr
     | READ
     | CHAR_LITERAL
     | STRING_LITERAL
@@ -144,7 +146,7 @@ expr ::= IDENTIFIER
     | seq_literal
     | function_call
     | set_literal
-    | seq_call
+    | IDENTIFIER seq_call
     | dict_literal
     | property_call
     | TRUE
@@ -183,6 +185,7 @@ property_call ::= expr DOT IDENTIFIER;
  | SET_DIFF
  | SET_UNION
  | IN
+ | COLON
  ;
 
  type ::= INTEGER
@@ -195,7 +198,6 @@ property_call ::= expr DOT IDENTIFIER;
  | TOP
  | IDENTIFIER
  | VOID
- | STRING_TYPE
  ;
 
  function_call ::= IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN
@@ -225,8 +227,12 @@ var_declaration ::= type IDENTIFIER;
 fdef ::= FUN_DEF type IDENTIFIER L_SOFT_PAREN type IDENTIFIER var_list R_SOFT_PAREN L_CURL_PAREN statement stmnt_list R_CURL_PAREN
     | FUN_DEF type IDENTIFIER L_SOFT_PAREN type IDENTIFIER var_list R_SOFT_PAREN L_CURL_PAREN R_CURL_PAREN
     | FUN_DEF type IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN L_CURL_PAREN statement stmnt_list R_CURL_PAREN
-    | FUN_DEF type IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN L_CURL_PAREN R_CURL_PAREN;
-
+    | FUN_DEF type IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN L_CURL_PAREN R_CURL_PAREN
+    | FUN_DEF IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN L_CURL_PAREN R_CURL_PAREN
+    | FUN_DEF IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN L_CURL_PAREN statement stmnt_list R_CURL_PAREN
+    | FUN_DEF IDENTIFIER L_SOFT_PAREN type IDENTIFIER var_list R_SOFT_PAREN L_CURL_PAREN R_CURL_PAREN
+    | FUN_DEF IDENTIFIER L_SOFT_PAREN type IDENTIFIER var_list R_SOFT_PAREN L_CURL_PAREN statement stmnt_list R_CURL_PAREN
+    ;
 
 tdef ::= TYPE_DEF IDENTIFIER L_CURL_PAREN type IDENTIFIER var_list R_CURL_PAREN
     | TYPE_DEF IDENTIFIER L_CURL_PAREN R_CURL_PAREN;
@@ -243,11 +249,8 @@ seq_literal ::= L_SQ_PAREN R_SQ_PAREN
     ;
 
 seq_call ::= L_SQ_PAREN expr R_SQ_PAREN
-    | L_SQ_PAREN COLON expr R_SQ_PAREN
-    | L_SQ_PAREN expr COLON R_SQ_PAREN
     | L_SQ_PAREN expr R_SQ_PAREN seq_call
-    | L_SQ_PAREN COLON expr R_SQ_PAREN seq_call
-    | L_SQ_PAREN expr COLON R_SQ_PAREN seq_call;
+    ;
 
 set_assignment ::= SET L_TRI_PAREN type R_TRI_PAREN IDENTIFIER ASSIGN expr;
 set_declaration ::= SET L_TRI_PAREN type R_TRI_PAREN IDENTIFIER;
@@ -262,7 +265,7 @@ dict_declaration ::= DICTIONARY L_TRI_PAREN type type_list R_TRI_PAREN IDENTIFIE
 dict_literal ::= L_SOFT_PAREN expr COLON expr dict_element_list R_SOFT_PAREN
     ;
 
-alias ::= ALIAS expr IDENTIFIER;
+alias ::= ALIAS type IDENTIFIER;
 
 lambda ::= FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER PIPE lambda_list ARROW L_CURL_PAREN statement stmnt_list R_CURL_PAREN
  | FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER PIPE lambda_list ARROW expr
