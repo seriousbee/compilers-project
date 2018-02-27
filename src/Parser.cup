@@ -110,7 +110,7 @@ starter ::= tdef SEMI starter
  | thread_assignment SEMI starter
  | alias SEMI starter
  | lambda SEMI starter
- | main
+ | main SEMI
  ;
 
 statement ::= function_call SEMI
@@ -135,7 +135,7 @@ expr ::= IDENTIFIER
     | expr binary_operator expr
     | MINUS expr
     | NOT expr
-    | READ SEMI
+    | READ
     | CHAR_LITERAL
     | STRING_LITERAL
     | FLOAT_LITERAL
@@ -150,8 +150,7 @@ expr ::= IDENTIFIER
     | FALSE
     ;
 
-main ::= MAIN L_CURL_PAREN stmnt_list R_CURL_PAREN SEMI
- | MAIN L_CURL_PAREN R_CURL_PAREN SEMI;
+main ::= MAIN L_CURL_PAREN stmnt_list R_CURL_PAREN;
 
 compound_stmnt ::= FORALL L_SOFT_PAREN IDENTIFIER IN expr R_SOFT_PAREN DO stmnt_list OD
     | WHILE expr DO stmnt_list OD
@@ -196,7 +195,10 @@ property_call ::= expr DOT IDENTIFIER;
  | STRING_TYPE
  ;
 
- function_call ::= IDENTIFIER seq_literal;
+ function_call ::= IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN
+  | IDENTIFIER L_SOFT_PAREN expr R_SOFT_PAREN
+  | IDENTIFIER L_SOFT_PAREN expr expr_list R_SOFT_PAREN
+  ;
 
  elif ::= ELIF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list FI
   | ELIF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list elif
@@ -218,8 +220,12 @@ property_call ::= expr DOT IDENTIFIER;
 
 var_declaration ::= type IDENTIFIER;
 
-fdef ::= FUN_DEF type IDENTIFIER L_SOFT_PAREN var_list R_SOFT_PAREN L_CURL_PAREN stmnt_list R_CURL_PAREN SEMI
-    | FUN_DEF type IDENTIFIER L_SOFT_PAREN var_list R_SOFT_PAREN L_CURL_PAREN R_CURL_PAREN SEMI;
+fdef ::= FUN_DEF type IDENTIFIER L_SOFT_PAREN var_list R_SOFT_PAREN L_CURL_PAREN stmnt_list R_CURL_PAREN
+    | FUN_DEF type IDENTIFIER L_SOFT_PAREN var_list R_SOFT_PAREN L_CURL_PAREN R_CURL_PAREN
+    | FUN_DEF type IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN L_CURL_PAREN stmnt_list R_CURL_PAREN
+    | FUN_DEF type IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN L_CURL_PAREN R_CURL_PAREN;
+
+
 tdef ::= TYPE_DEF IDENTIFIER L_CURL_PAREN var_list R_CURL_PAREN;
 thread_assignment ::= THREAD IDENTIFIER ASSIGN L_CURL_PAREN stmnt_list R_CURL_PAREN
     | THREAD IDENTIFIER ASSIGN L_CURL_PAREN  R_CURL_PAREN;
@@ -228,9 +234,8 @@ thread_assignment ::= THREAD IDENTIFIER ASSIGN L_CURL_PAREN stmnt_list R_CURL_PA
 
 seq_assignment ::= SEQUENCE L_TRI_PAREN type R_TRI_PAREN IDENTIFIER ASSIGN expr;
 seq_declaration ::= SEQUENCE L_TRI_PAREN type R_TRI_PAREN IDENTIFIER;
-seq_literal ::= L_SOFT_PAREN R_SOFT_PAREN
-    | L_SOFT_PAREN expr R_SOFT_PAREN
-    | L_SOFT_PAREN expr expr_list R_SOFT_PAREN
+seq_literal ::= L_SQ_PAREN R_SQ_PAREN
+    | L_SQ_PAREN expr expr_list R_SQ_PAREN
     ;
 
 seq_call ::= L_SQ_PAREN expr R_SQ_PAREN;

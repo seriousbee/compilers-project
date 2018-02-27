@@ -26,17 +26,17 @@ WhiteSpace     = {LineTerminator} | [ \t\f]
 /* comments */
 Comment = (\/\#([^#]|[\r\n]|(\#+([^#/]|[\r\n])))*\#+\/)|(#.*)
 
-Identifier = [:jletter:] ([:jletter:] | [:jletterdigit:] | [_])*
+Identifier = [a-zA-Z]([a-zA-Z_0-9]*)
 
-DecIntegerLiteral = 0 | [-]?[1-9]([0-9] | [_])*
+DecIntegerLiteral = 0|[-]?[1-9]([0-9]|[_])*
 
-DecPositiveIntegerLiteral = 0 | [1-9]([0-9] | [_])*
+DecPositiveIntegerLiteral = 0|[1-9]([0-9]|[_])*
 
-RationalLiteral = {DecIntegerLiteral} [/] {DecPositiveIntegerLiteral}
+RationalLiteral = {DecIntegerLiteral}[/]{DecPositiveIntegerLiteral}
 
-FloatLiteral = {DecIntegerLiteral} [.] {DecPositiveIntegerLiteral}
+FloatLiteral = {DecIntegerLiteral}[.]{DecPositiveIntegerLiteral}
 
-CharLiteral = [']([!-9]|[a-z]|[A-Z])[']
+CharLiteral = \'[!-9a-zA-Z]\'
 
 
 //source: https://stackoverflow.com/questions/2039795/regular-expression-for-a-string-literal-in-flex-lex

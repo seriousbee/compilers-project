@@ -8,14 +8,14 @@ tests/open/n-alice.s
 Syntax error at line 2, column 0
 Couldn't repair and continue parse at character 1 of input
 tests/open/p-forall.s
-Syntax error at line 2, column 20
+Syntax error at line 2, column 23
 Couldn't repair and continue parse at character 1 of input
 tests/open/p-while.s
-Syntax error at line 7, column 26
+Syntax error at line 7, column 29
 Couldn't repair and continue parse at character 6 of input
 tests/open/p-empty-adts.s
-Syntax error at line 3, column 17
-Couldn't repair and continue parse at character 2 of input
+Syntax error at line 2, column 22
+Couldn't repair and continue parse at character 1 of input
 tests/open/p-if-then-else0.s
 Syntax error at line 1, column 8
 Couldn't repair and continue parse at character 0 of input
@@ -35,32 +35,33 @@ tests/open/n-fib.s
 Syntax error at line 6, column 0
 Couldn't repair and continue parse at character 5 of input
 tests/open/p-alice.s
-Syntax error at line 5, column 16
-Couldn't repair and continue parse at character 4 of input
+Syntax error at line 11, column 29
+Couldn't repair and continue parse at character 10 of input
 tests/open/n-no-main.s
 Syntax error at line 1, column 6
 Couldn't repair and continue parse at character 0 of input
 tests/open/p-seq.s
-Syntax error at line 1, column 22
+Syntax error at line 1, column 26
 Couldn't repair and continue parse at character 0 of input
 tests/open/p-main-only.s
-parsing successful
+Syntax error at line 6, column 27
+Couldn't repair and continue parse at character 5 of input
 tests/open/p-reverse.s
 Syntax error at line 1, column 8
 Couldn't repair and continue parse at character 0 of input
 tests/open/n-empty-main.s
-parsing successful
+Syntax error at line 3, column 0
+Couldn't repair and continue parse at character 2 of input
 tests/open/p-nested-func-decls.s
-Syntax error at line 6, column 4
-Couldn't repair and continue parse at character 5 of input
+parsing successful
 tests/open/n-stray-return.s
 Syntax error at line 5, column 0
 Couldn't repair and continue parse at character 4 of input
 tests/open/p-two-func-if.s
-Syntax error at line 5, column 0
-Couldn't repair and continue parse at character 4 of input
+Syntax error at line 15, column 27
+Couldn't repair and continue parse at character 14 of input
 tests/open/p-nested-while.s
-Syntax error at line 2, column 17
+Syntax error at line 2, column 20
 Couldn't repair and continue parse at character 1 of input
 tests/open/n-dict-unbalanced-open.s
 Syntax error at line 1, column 29
@@ -76,14 +77,15 @@ tests/open/n-stray-elif.s
 Syntax error at line 4, column 2
 Couldn't repair and continue parse at character 3 of input
 tests/open/p-elif.s
-parsing successful
+Syntax error at line 7, column 30
+Couldn't repair and continue parse at character 6 of input
 tests/open/p-nested-lambda-expression.s
 parsing successful
 tests/open/n-multiple-assignment.s
 Syntax error at line 5, column 9
 Couldn't repair and continue parse at character 4 of input
 tests/open/n-type-stutter-in-plist.s
-Syntax error at line 5, column 0
+Syntax error at line 5, column 29
 Couldn't repair and continue parse at character 4 of input
 tests/open/n-type-in-expr.s
 Syntax error at line 3, column 12
@@ -98,5 +100,5 @@ tests/open/n-func-param-type-error0.s
 Syntax error at line 1, column 24
 Couldn't repair and continue parse at character 0 of input
 tests/open/p-func-decl-in-main.s
-Syntax error at line 5, column 0
-Couldn't repair and continue parse at character 4 of input
+Syntax error at line 14, column 27
+Couldn't repair and continue parse at character 13 of input
