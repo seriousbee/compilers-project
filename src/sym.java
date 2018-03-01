@@ -7,12 +7,12 @@
 public class sym {
   /* terminals */
   public static final int FORALL = 38;
-  public static final int STRING_LITERAL = 68;
+  public static final int STRING_LITERAL = 67;
   public static final int FUNCTION = 29;
   public static final int BIGGER_EQ = 56;
   public static final int POWER = 51;
   public static final int TYPE_DEF = 30;
-  public static final int CHAR_LITERAL = 69;
+  public static final int CHAR_LITERAL = 68;
   public static final int L_CURL_PAREN = 12;
   public static final int INTEGER = 17;
   public static final int R_SQ_PAREN = 15;
@@ -22,9 +22,9 @@ public class sym {
   public static final int NOT = 53;
   public static final int AND = 52;
   public static final int L_TRI_PAREN = 10;
-  public static final int SEQ_CONCAT = 63;
+  public static final int SEQ_CONCAT = 62;
   public static final int RATIONAL = 18;
-  public static final int IN = 62;
+  public static final int IN = 61;
   public static final int OR = 54;
   public static final int COMMA = 4;
   public static final int FI = 36;
@@ -44,15 +44,14 @@ public class sym {
   public static final int DICTIONARY = 20;
   public static final int error = 1;
   public static final int PIPE = 7;
-  public static final int SET_INTSECT = 60;
+  public static final int SET_INTSECT = 59;
   public static final int FUN_DEF = 28;
   public static final int BREAK = 41;
-  public static final int RATIONAL_LITERAL = 66;
+  public static final int RATIONAL_LITERAL = 65;
   public static final int VOID = 25;
   public static final int TOP = 24;
   public static final int ARROW = 8;
   public static final int COLON = 5;
-  public static final int SET_UNION = 59;
   public static final int ELSE = 35;
   public static final int READ = 44;
   public static final int NOT_EQ = 58;
@@ -62,8 +61,8 @@ public class sym {
   public static final int MULTI = 49;
   public static final int ALIAS = 26;
   public static final int SEQUENCE = 21;
-  public static final int FLOAT_LITERAL = 67;
-  public static final int SET_DIFF = 61;
+  public static final int FLOAT_LITERAL = 66;
+  public static final int SET_DIFF = 60;
   public static final int FALSE = 46;
   public static final int DIVISION = 50;
   public static final int R_TRI_PAREN = 14;
@@ -74,8 +73,8 @@ public class sym {
   public static final int DO = 39;
   public static final int SET = 22;
   public static final int L_SOFT_PAREN = 9;
-  public static final int INTEGER_LITERAL = 65;
-  public static final int IDENTIFIER = 64;
+  public static final int INTEGER_LITERAL = 64;
+  public static final int IDENTIFIER = 63;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -136,7 +135,6 @@ public class sym {
   "BIGGER_EQ",
   "EQUAL",
   "NOT_EQ",
-  "SET_UNION",
   "SET_INTSECT",
   "SET_DIFF",
   "IN",

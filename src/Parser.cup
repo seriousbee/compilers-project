@@ -45,7 +45,7 @@ terminal AND, NOT, OR;
 terminal SMALLER_EQ, BIGGER_EQ, EQUAL, NOT_EQ;
 
 //set operations
-terminal SET_UNION, SET_INTSECT, SET_DIFF, IN;
+terminal SET_INTSECT, SET_DIFF, IN;
 
 //seq operations
 terminal SEQ_CONCAT;
@@ -84,16 +84,10 @@ precedence right POWER;
 precedence left ELSE;
 precedence left ELIF;
 precedence left BIGGER_EQ, EQUAL, SMALLER_EQ, NOT_EQ, AND, OR, DOT, IN;
-precedence left SEQ_CONCAT, SET_INTSECT, PIPE, SET_DIFF, SET_UNION, ARROW, COLON;
+precedence left SEQ_CONCAT, SET_INTSECT, PIPE, SET_DIFF, ARROW, COLON;
 
 start with starter;
 
-//TODO: Problems:
-    //seq literal: seq<int> a := [1, 2, 3];
-    //dict assignment: 	dict<int,int> x := ( );
-    //strings: string s1 := "Alice in Wonderland";, seq<string> l1 := ["a","b", "c", "d", "e"];
-    //int literal? 	seq<int> a := [1, 2, 3];
-    //set keyword? + literals:     set<int> a := {0, 1, 2};
 
 starter ::= tdef SEMI starter
  | fdef SEMI starter
@@ -184,7 +178,6 @@ property_call ::= expr DOT IDENTIFIER;
  | SET_INTSECT
  | PIPE
  | SET_DIFF
- | SET_UNION
  | IN
  | COLON
  ;

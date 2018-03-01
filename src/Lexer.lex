@@ -54,8 +54,6 @@ StringLiteral = \"(\\.|[^\"\\])*\"
  "set"              { return symbol(sym.SET); }
  "bool"            { return symbol(sym.BOOLEAN); }
  "top"              { return symbol(sym.TOP); }
- "void"              { return symbol(sym.VOID); }
-
 
 /* top-level keywords */
  "alias"           { return symbol(sym.ALIAS); }
@@ -106,6 +104,9 @@ StringLiteral = \"(\\.|[^\"\\])*\"
   {CharLiteral}            { return symbol(sym.CHAR_LITERAL); }
   {StringLiteral}             { return symbol(sym.STRING_LITERAL); }
 
+  "->"                           { return symbol(sym.ARROW); }
+  "::"                            { return symbol(sym.SEQ_CONCAT); }
+
   /* math operators */
   "+"                            { return symbol(sym.PLUS); }
   "-"                           { return symbol(sym.MINUS); }
@@ -144,11 +145,9 @@ StringLiteral = \"(\\.|[^\"\\])*\"
 
   ","                           { return symbol(sym.COMMA); }
   "."                           { return symbol(sym.DOT); }
-  "->"                           { return symbol(sym.ARROW); }
 
 
   /* seq operators */
-  "::"                            { return symbol(sym.SEQ_CONCAT); }
 
   /* comments */
   {Comment}                      { /* ignore */ }
