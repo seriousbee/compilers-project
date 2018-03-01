@@ -70,7 +70,7 @@ non terminal seq_assignment, seq_literal, seq_call, dict_assignment, dict_litera
 
 non terminal var_declaration, seq_declaration, dict_declaration, property_call;
 
-non terminal fdef, starter, alias, lambda, lambda_list;
+non terminal fdef, starter, alias, lambda, lambda_list, id_list, id_list_helper;
 
 non terminal set_assignment, set_literal, set_declaration;
 
@@ -267,7 +267,7 @@ dict_literal ::= L_SOFT_PAREN expr COLON expr dict_element_list R_SOFT_PAREN
 alias ::= ALIAS type IDENTIFIER;
 
 lambda ::= FUNCTION IDENTIFIER ASSIGN lambda_list L_CURL_PAREN statement stmnt_list R_CURL_PAREN
- | FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER PIPE lambda_list ARROW expr
+ | FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER id_list PIPE lambda_list ARROW expr
  ;
 
 
@@ -297,7 +297,12 @@ expr_list ::= COMMA expr_list_helper
     |
     ;
 
-lambda_list_helper ::= PIPE IDENTIFIER PIPE ARROW lambda_list;
+id_list_helper ::= IDENTIFIER id_list;
+id_list ::= COMMA id_list_helper
+    |
+    ;
+
+lambda_list_helper ::= PIPE IDENTIFIER id_list PIPE ARROW lambda_list;
 lambda_list ::= lambda_list_helper
     |
     ;
