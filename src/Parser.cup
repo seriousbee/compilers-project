@@ -151,13 +151,15 @@ expr ::= IDENTIFIER
 
 main ::= MAIN L_CURL_PAREN statement stmnt_list R_CURL_PAREN;
 
-compound_stmnt ::= FORALL L_SOFT_PAREN expr R_SOFT_PAREN DO statement stmnt_list OD
-    | WHILE expr DO statement stmnt_list OD
-    | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN statement stmnt_list FI
-    | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN statement stmnt_list elif
-    | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN statement stmnt_list ELSE stmnt_list FI
-    | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN statement stmnt_list elif ELSE statement stmnt_list FI
+compound_stmnt ::= FORALL L_SOFT_PAREN expr R_SOFT_PAREN DO stmnt_list OD
+    | WHILE expr DO stmnt_list OD
+    | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list FI
+    | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list elif
+    | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list ELSE stmnt_list FI
+    | IF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list elif ELSE stmnt_list FI
     ;
+
+
 
 property_call ::= expr DOT IDENTIFIER;
 
@@ -198,8 +200,8 @@ property_call ::= expr DOT IDENTIFIER;
   | IDENTIFIER L_SOFT_PAREN expr expr_list R_SOFT_PAREN
   ;
 
- elif ::= ELIF L_SOFT_PAREN expr R_SOFT_PAREN THEN statement stmnt_list FI
-  | ELIF L_SOFT_PAREN expr R_SOFT_PAREN THEN statement stmnt_list elif
+ elif ::= ELIF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list FI
+  | ELIF L_SOFT_PAREN expr R_SOFT_PAREN THEN stmnt_list elif
   ;
 
  return ::= RETURN expr
