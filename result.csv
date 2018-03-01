@@ -1,21 +1,156 @@
 
+tests/open/p_13_7_operators.s
+parsing successful
+tests/open/p_8_3_1_dictionaries_can_declare_value_type_as_top.s
+parsing successful
+tests/open/n_12_1_1_3_2_lambda_expressions_can_produce_a_statement_body_containing_only_statements.s
+Syntax error at line 1, column 9 |
+Couldn't repair and continue parse at character 0 of input
+tests/open/p_9_5_sequences_should_support_the_standard_indexes_4.s
+Syntax error at line 4, column 23 :=
+Couldn't repair and continue parse at character 3 of input
+tests/open/n_11_6_2_thread_declaration_must_have_a_body.s
+Syntax error at line 1, column 8 ;
+Couldn't repair and continue parse at character 0 of input
+tests/open/p_11_4_7_function_declaration_may_return_threads.s
+Syntax error at line 1, column 5 thread
+Couldn't repair and continue parse at character 0 of input
 tests/open/p-fib.s
 parsing successful
+tests/open/p_11_5_2_initialization_declaration_should_support_expression_lists.s
+parsing successful
+tests/open/n_2_4_main_returns_no_value.s
+Syntax error at line 2, column 4 main
+Couldn't repair and continue parse at character 1 of input
+tests/open/p_14_10_while_statements_are_statements.s
+parsing successful
+tests/open/n_4_4_identifier_must_begin_with_letter_and_consist_of_letters_digits_and_underscores_only_3.s
+Syntax error at line 1, column 6 *
+Couldn't repair and continue parse at character 0 of input
+tests/open/p_5_4_2_character_literals_contain_all_ascii_punctuation_4.s
+parsing successful
+tests/open/p_14_8_assignment_statements_are_statements.s
+Syntax error at line 4, column 6 :=
+Couldn't repair and continue parse at character 3 of input
+tests/open/p_5_4_2_character_literals_contain_all_ascii_punctuation_0.s
+parsing successful
+tests/open/n_2_1_last_declaration_must_be_main.s
+Syntax error at line 4, column 0 fdef
+Couldn't repair and continue parse at character 3 of input
 tests/open/p-thread.s
 parsing successful
+tests/open/p_10_5_sets_support_mathematical_opertions.s
+parsing successful
+tests/open/n_9_2_sequence_must_have_type_when_declared.s
+Syntax error at line 1, column 4 >
+Couldn't repair and continue parse at character 0 of input
+tests/open/p_11_4_2_function_declaration_does_not_require_return_type.s
+parsing successful
+tests/open/p_12_1_lambda_expressions.s
+Syntax error at line 1, column 9 |
+Couldn't repair and continue parse at character 0 of input
+tests/open/n_9_1_sequence_is_a_sequence_of_values_1.s
+parsing successful
+tests/open/p_14_4_2_return_statements_can_return_value.s
+Syntax error at line 9, column 6 a
+Couldn't repair and continue parse at character 8 of input
 tests/open/n-alice.s
 Syntax error at line 2, column 0 string
 Couldn't repair and continue parse at character 1 of input
+tests/open/p_9_6_2_sequences_slices_do_not_require_upper_index.s
+parsing successful
+tests/open/p_11_6_1_thread_declaration.s
+parsing successful
+tests/open/p_14_6_read_statements_are_statements.s
+Syntax error at line 3, column 6 a
+Couldn't repair and continue parse at character 2 of input
+tests/open/p_9_6_4_sequences_indexes_might_be_negative.s
+parsing successful
+tests/open/n_14_3_statements_must_terminate_with_semi_colon_2.s
+Syntax error at line 4, column 6 a
+Couldn't repair and continue parse at character 3 of input
+tests/open/p_11_4_6_function_declaration_may_accept_threads.s
+Syntax error at line 1, column 17 thread
+Couldn't repair and continue parse at character 0 of input
+tests/open/n_8_2_dictionary_declaration_must_specify_types_of_key_and_values_3.s
+Syntax error at line 1, column 9 >
+Couldn't repair and continue parse at character 0 of input
+tests/open/p_10_1_sets_are_sequences_of_values.s
+Syntax error at line 3, column 4 function
+Couldn't repair and continue parse at character 2 of input
+tests/open/p_13_2_operators.s
+parsing successful
 tests/open/p-forall.s
+parsing successful
+tests/open/p_13_8_operators_parenthesis.s
+parsing successful
+tests/open/p_9_3_sequence_may_use_top_as_type.s
 parsing successful
 tests/open/p-while.s
 parsing successful
+tests/open/n_5_1_character_literals_are_single_letters_wrapped_in_quotes.s
+Exception in thread "main" java.lang.Error: Illegal character <'>
+	at Lexer.next_token(Lexer.java:723)
+	at java_cup.runtime.lr_parser.scan(lr_parser.java:366)
+	at java_cup.runtime.lr_parser.parse(lr_parser.java:693)
+	at SC.main(SC.java:15)
+tests/open/p_10_3_sets_are_declared_with_curly_braces.s
+parsing successful
+tests/open/p_11_2_1_data_type_declarations_can_be_nested.s
+parsing successful
+tests/open/p_5_2_character_literals_may_contain_punctuation_symbols.s
+parsing successful
+tests/open/p_3_1_single_line_comment_supported.s
+parsing successful
 tests/open/p-empty-adts.s
 parsing successful
+tests/open/p_12_2_field_references_are_expressions.s
+parsing successful
+tests/open/n_14_11_break_statements_can_only_occur_in_while_loops.s
+parsing successful
+tests/open/p_5_4_2_character_literals_contain_all_ascii_punctuation_7.s
+parsing successful
+tests/open/p_12_1_1_1_lambda_expressions_should_support_a_list_of_parameters.s
+Syntax error at line 1, column 9 |
+Couldn't repair and continue parse at character 0 of input
 tests/open/p-if-then-else0.s
 parsing successful
+tests/open/p_13_1_operators.s
+parsing successful
+tests/open/p_9_5_sequences_should_support_the_standard_indexes_3.s
+Syntax error at line 4, column 14 :=
+Couldn't repair and continue parse at character 3 of input
+tests/open/n_14_7_print_statements_require_an_expression.s
+Syntax error at line 3, column 6 ;
+Couldn't repair and continue parse at character 2 of input
+tests/open/p_5_3_character_literals_may_contain_digits.s
+parsing successful
+tests/open/p_9_2_sequence_must_have_type_when_declared.s
+Syntax error at line 4, column 4 function
+Couldn't repair and continue parse at character 3 of input
 tests/open/n-decl.s
 Syntax error at line 6, column 14 :=
+Couldn't repair and continue parse at character 5 of input
+tests/open/p_13_8_operators.s
+parsing successful
+tests/open/p_12_1_1_3_2_lambda_expressions_can_produce_a_statement_body_enclosed_in_braces.s
+Syntax error at line 1, column 9 |
+Couldn't repair and continue parse at character 0 of input
+tests/open/p_11_5_initialization_declaration_should_allow_uninitialized_declarations.s
+parsing successful
+tests/open/p_14_7_print_statements_are_statements.s
+parsing successful
+tests/open/p_5_4_2_character_literals_contain_all_ascii_punctuation_3.s
+parsing successful
+tests/open/p_9_6_3_sequences_slices_do_not_require_either_index.s
+Syntax error at line 4, column 24 ]
+Couldn't repair and continue parse at character 3 of input
+tests/open/p_3_2_1_multi_line_comments_can_span_multiple.s
+parsing successful
+tests/open/p_11_3_type_alias_declarations_can_be_nested.s
+parsing successful
+tests/open/p_5_4_2_character_literals_contain_all_ascii_punctuation_9.s
+Syntax error at line 6, column 0 1
 Couldn't repair and continue parse at character 5 of input
 tests/open/n-main-missing-brace.s
 Syntax error at line 2, column 2 return
@@ -23,66 +158,252 @@ Couldn't repair and continue parse at character 1 of input
 tests/open/n-thread-no-init.s
 Syntax error at line 2, column 13 ;
 Couldn't repair and continue parse at character 1 of input
+tests/open/n_2_program_consists_of_list_declarations.s
+Syntax error at line 2, column 0 while
+Couldn't repair and continue parse at character 1 of input
 tests/open/p-tdef.s
 parsing successful
+tests/open/p_10_5_3_sets_support_mathematical_operations_difference.s
+parsing successful
+tests/open/p_2_2_1_declaration_list_supports_global_variables.s
+parsing successful
+tests/open/p_14_4_return_statements_are_optional.s
+Syntax error at line 8, column 6 a
+Couldn't repair and continue parse at character 7 of input
 tests/open/n-fib.s
 Syntax error at line 6, column 0 fdef
 Couldn't repair and continue parse at character 5 of input
 tests/open/p-alice.s
 parsing successful
+tests/open/p_3_2_multi_line_comments_supported.s
+parsing successful
 tests/open/n-no-main.s
 Syntax error at line 0, column -1 null
 Couldn't repair and continue parse
+tests/open/p_2_program_consists_of_list_of_declarations.s
+Syntax error at line 1, column 14 3
+Couldn't repair and continue parse at character 0 of input
+tests/open/n_14_3_statements_must_terminate_with_semi_colon_1.s
+Syntax error at line 4, column 1 read
+Couldn't repair and continue parse at character 3 of input
+tests/open/p_14_12_forall_statements_are_statements.s
+parsing successful
 tests/open/p-seq.s
 parsing successful
+tests/open/p_11_4_1_function_declaration_may_be_nested.s
+parsing successful
+tests/open/n_14_3_statements_must_terminate_with_semi_colon_5.s
+Syntax error at line 4, column 6 a
+Couldn't repair and continue parse at character 3 of input
 tests/open/p-main-only.s
 parsing successful
+tests/open/p_11_3_type_alias_declarations.s
+parsing successful
+tests/open/p_11_3_type_alias_declarations_can_alias_threads.s
+Syntax error at line 1, column 6 thread
+Couldn't repair and continue parse at character 0 of input
+tests/open/p_13_4_operators.s
+parsing successful
+tests/open/p_4_3_identifiers_are_case_sensitive.s
+parsing successful
+tests/open/p_14_9_2_if_statements_can_have_else_branches.s
+parsing successful
+tests/open/p_2_2_2_declaration_list_supports_new_data_types.s
+parsing successful
+tests/open/p_5_4_2_character_literals_contain_all_ascii_punctuation_6.s
+parsing successful
 tests/open/p-reverse.s
+parsing successful
+tests/open/n_4_4_identifier_must_begin_with_letter_and_consist_of_letters_digits_and_underscores_only_1.s
+Exception in thread "main" java.lang.Error: Illegal character <$>
+	at Lexer.next_token(Lexer.java:723)
+	at java_cup.runtime.lr_parser.scan(lr_parser.java:366)
+	at java_cup.runtime.lr_parser.parse(lr_parser.java:693)
+	at SC.main(SC.java:15)
+tests/open/p_8_1_dictionary_is_list_of_key_value_pairs.s
+Syntax error at line 1, column 23 ,
+Couldn't repair and continue parse at character 0 of input
+tests/open/p_11_4_3_function_declaration_body_can_contain_local_declarations.s
+parsing successful
+tests/open/n_11_4_3_function_declaration_body_must_contain_at_least_one_statement.s
+parsing successful
+tests/open/p_9_6_sequences_should_support_sequence_slicing.s
 parsing successful
 tests/open/n-empty-main.s
 Syntax error at line 3, column 0 }
 Couldn't repair and continue parse at character 2 of input
+tests/open/n_10_1_sequence_is_a_sequence_of_values_2.s
+Syntax error at line 1, column 16 ,
+Couldn't repair and continue parse at character 0 of input
 tests/open/p-nested-func-decls.s
+parsing successful
+tests/open/p_13_3_operators.s
+parsing successful
+tests/open/p_5_4_1_character_literals_may_contain_space.s
 parsing successful
 tests/open/n-stray-return.s
 Syntax error at line 5, column 0 return
 Couldn't repair and continue parse at character 4 of input
+tests/open/n_4_1_identifier_starts_with_letter.s
+Syntax error at line 1, column 4 4
+Couldn't repair and continue parse at character 0 of input
+tests/open/p_8_5_dictionary_variables_can_be_assigned_to.s
+Syntax error at line 3, column 6 :=
+Couldn't repair and continue parse at character 2 of input
+tests/open/p_10_5_1_sets_support_mathematical_operations_union.s
+parsing successful
+tests/open/p_9_5_sequences_should_support_the_standard_indexes_2.s
+Syntax error at line 4, column 6 :=
+Couldn't repair and continue parse at character 3 of input
+tests/open/p_5_4_2_character_literals_contain_all_ascii_punctuation_8.s
+parsing successful
+tests/open/p_8_3_1_2_dictionaries_can_declare_value_type_as_top.s
+parsing successful
+tests/open/p_5_4_2_character_literals_contain_all_ascii_punctuation_2.s
+parsing successful
+tests/open/p_4_4_identifier_non_primary_characters_must_be_from_letters_underscores_digits.s
+parsing successful
+tests/open/p_10_5_2_sets_support_mathematical_operations_intersection.s
+parsing successful
+tests/open/p_8_4_the_empty_dictionary_is_lparen_rparen.s
+parsing successful
+tests/open/p_14_9_3_if_statements_can_have_elif_branches.s
+Syntax error at line 7, column 1 else
+Couldn't repair and continue parse at character 6 of input
 tests/open/p-two-func-if.s
+parsing successful
+tests/open/n_14_6_1_read_statements_require_variables.s
+Syntax error at line 3, column 6 a
+Couldn't repair and continue parse at character 2 of input
+tests/open/p_9_1_sequence_is_a_sequence_of_values.s
 parsing successful
 tests/open/p-nested-while.s
 parsing successful
 tests/open/n-dict-unbalanced-open.s
 Syntax error at line 1, column 29 ,
 Couldn't repair and continue parse at character 0 of input
+tests/open/p_5_1_character_literals_are_single_letters_wrapped_in_quotes.s
+parsing successful
 tests/open/p-adt.s
 parsing successful
 tests/open/p-fp.s
 parsing successful
+tests/open/p_11_5_initialization_declaration.s
+parsing successful
+tests/open/p_11_4_1_function_declaration.s
+parsing successful
+tests/open/n_14_3_statements_must_terminate_with_semi_colon_4.s
+Syntax error at line 4, column 6 a
+Couldn't repair and continue parse at character 3 of input
+tests/open/n_14_9_3_elif_branches_can_not_occur_alone.s
+Syntax error at line 3, column 1 elif
+Couldn't repair and continue parse at character 2 of input
+tests/open/n_10_2_sets_can_not_be_declared_with_top_as_their_type.s
+parsing successful
+tests/open/p_14_9_1_if_statements_are_statements.s
+parsing successful
+tests/open/n_12_1_2_lambda_expressions_should_not_allow_typed_parameters.s
+Syntax error at line 1, column 9 |
+Couldn't repair and continue parse at character 0 of input
 tests/open/p-rat.s
 parsing successful
+tests/open/p_14_11_break_statements_are_statements.s
+parsing successful
+tests/open/p_12_1_1_3_1_lambda_expressions_can_produce_an_expression_alone.s
+Syntax error at line 1, column 9 |
+Couldn't repair and continue parse at character 0 of input
 tests/open/n-stray-elif.s
 Syntax error at line 4, column 2 elif
 Couldn't repair and continue parse at character 3 of input
+tests/open/n_14_9_3_else_branches_can_not_occur_alone.s
+Syntax error at line 3, column 1 else
+Couldn't repair and continue parse at character 2 of input
+tests/open/p_13_6_operators.s
+parsing successful
+tests/open/p_11_2_1_data_type_declarations.s
+parsing successful
+tests/open/p_14_5_function_calls_are_statements.s
+parsing successful
+tests/open/p_10_4_empty_set_is_lbrace_rbrace.s
+parsing successful
+tests/open/n_8_2_dictionary_declaration_must_specify_types_of_key_and_values_1.s
+parsing successful
 tests/open/p-elif.s
 parsing successful
+tests/open/p_12_2_function_calls_are_expressions.s
+parsing successful
+tests/open/n_8_1_dictionary_is_list_of_key_value_pairs.s
+Syntax error at line 1, column 23 ,
+Couldn't repair and continue parse at character 0 of input
+tests/open/p_9_4_zero_length_sequence_is_rbrace_lbrace.s
+parsing successful
+tests/open/p_13_5_operators.s
+parsing successful
+tests/open/p_5_4_2_character_literals_contain_all_ascii_punctuation_5.s
+parsing successful
+tests/open/n_4_4_identifier_must_begin_with_letter_and_consist_of_letters_digits_and_underscores_only_2.s
+Exception in thread "main" java.lang.Error: Illegal character <£>
+	at Lexer.next_token(Lexer.java:723)
+	at java_cup.runtime.lr_parser.scan(lr_parser.java:366)
+	at java_cup.runtime.lr_parser.parse(lr_parser.java:693)
+	at SC.main(SC.java:15)
 tests/open/p-nested-lambda-expression.s
+parsing successful
+tests/open/p_8_3_1_1_dictionaries_can_declare_key_type_as_top.s
 parsing successful
 tests/open/n-multiple-assignment.s
 Syntax error at line 5, column 9 :=
 Couldn't repair and continue parse at character 4 of input
+tests/open/p_8_2_dictionary_declaration_must_specify_types_of_key_and_values.s
+Syntax error at line 4, column 5 function
+Couldn't repair and continue parse at character 3 of input
+tests/open/p_5_4_2_character_literals_contain_all_ascii_punctuation_1.s
+parsing successful
 tests/open/n-type-stutter-in-plist.s
 Syntax error at line 5, column 29 ,
 Couldn't repair and continue parse at character 4 of input
 tests/open/n-type-in-expr.s
 Syntax error at line 3, column 12 set
 Couldn't repair and continue parse at character 2 of input
+tests/open/p_9_5_sequences_should_support_the_standard_indexes_1.s
+parsing successful
+tests/open/p_11_4_5_function_declaration_may_return_functions.s
+Syntax error at line 1, column 5 function
+Couldn't repair and continue parse at character 0 of input
+tests/open/n_14_3_statements_must_terminate_with_semi_colon_3.s
+Syntax error at line 4, column 6 a
+Couldn't repair and continue parse at character 3 of input
+tests/open/p_2_2_3_declaration_lists_supports_defining_functions.s
+parsing successful
+tests/open/p_13_9_operators.s
+parsing successful
+tests/open/n_2_3_declaration_list_can_not_be_empty.s
+Syntax error at line 0, column -1 null
+Couldn't repair and continue parse
+tests/open/p_11_4_4_function_declaration_may_accept_functions_as_params.s
+Syntax error at line 1, column 17 function
+Couldn't repair and continue parse at character 0 of input
 tests/open/n-empty-else.s
 Syntax error at line 1, column 23 )
 Couldn't repair and continue parse at character 0 of input
+tests/open/p_13_0_operators.s
+parsing successful
 tests/open/p-set-ops.s
+parsing successful
+tests/open/p_14_5_2_function_calls_support_expression_lists.s
+parsing successful
+tests/open/p_14_3_statements_must_terminate_with_semi_colon.s
+Syntax error at line 4, column 6 a
+Couldn't repair and continue parse at character 3 of input
+tests/open/p_9_6_1_sequences_slices_do_not_require_lower_index.s
+parsing successful
+tests/open/p_12_1_4_functions_may_defined_using_lambda_expressions.s
 parsing successful
 tests/open/n-func-param-type-error0.s
 Syntax error at line 1, column 24 )
+Couldn't repair and continue parse at character 0 of input
+tests/open/n_8_2_dictionary_declaration_must_specify_types_of_key_and_values_2.s
+Syntax error at line 1, column 5 ,
 Couldn't repair and continue parse at character 0 of input
 tests/open/p-func-decl-in-main.s
 parsing successful

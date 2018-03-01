@@ -147,6 +147,7 @@ expr ::= IDENTIFIER
     | FALSE
     | L_SOFT_PAREN expr R_SOFT_PAREN
     | L_SOFT_PAREN R_SOFT_PAREN
+//    | lambda
     ;
 
 main ::= MAIN L_CURL_PAREN statement stmnt_list R_CURL_PAREN;

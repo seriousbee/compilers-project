@@ -36,7 +36,7 @@ RationalLiteral = {DecIntegerLiteral}[/]{DecPositiveIntegerLiteral}
 
 FloatLiteral = {DecIntegerLiteral}[.]{DecPositiveIntegerLiteral}
 
-CharLiteral = \'[!-9a-zA-Z]\'
+CharLiteral = \'(\\.|[^\"\\])\'
 
 //source: https://stackoverflow.com/questions/2039795/regular-expression-for-a-string-literal-in-flex-lex
 StringLiteral = \"(\\.|[^\"\\])*\"
