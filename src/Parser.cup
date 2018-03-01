@@ -72,7 +72,7 @@ non terminal var_declaration, seq_declaration, dict_declaration, property_call;
 
 non terminal fdef, starter, alias, lambda, lambda_list, id_list, id_list_helper;
 
-non terminal set_assignment, set_literal, set_declaration;
+non terminal set_assignment, set_literal, set_declaration,lambda_literal;
 
 
 precedence left PLUS, MINUS, DIVISION, MULTI;
@@ -84,7 +84,7 @@ precedence right POWER;
 precedence left ELSE;
 precedence left ELIF;
 precedence left BIGGER_EQ, EQUAL, SMALLER_EQ, NOT_EQ, AND, OR, DOT, IN;
-precedence left SEQ_CONCAT, SET_INTSECT, PIPE, SET_DIFF, ARROW, COLON;
+precedence left SEQ_CONCAT, SET_INTSECT, PIPE, SET_DIFF, ARROW, COLON, FUNCTION;
 
 start with starter;
 
@@ -123,6 +123,7 @@ statement ::= function_call SEMI
     | fdef SEMI
     | alias SEMI
     | lambda SEMI
+    | READ IDENTIFIER SEMI
     ;
 
 expr ::= IDENTIFIER
@@ -130,8 +131,6 @@ expr ::= IDENTIFIER
     | MINUS expr
     | PLUS expr
     | NOT expr
-    | COLON expr
-    | READ
     | CHAR_LITERAL
     | STRING_LITERAL
     | FLOAT_LITERAL
@@ -140,14 +139,14 @@ expr ::= IDENTIFIER
     | seq_literal
     | function_call
     | set_literal
-    | IDENTIFIER seq_call
+    | expr seq_call
     | dict_literal
     | property_call
     | TRUE
     | FALSE
     | L_SOFT_PAREN expr R_SOFT_PAREN
     | L_SOFT_PAREN R_SOFT_PAREN
-//    | lambda
+    | lambda
     ;
 
 main ::= MAIN L_CURL_PAREN statement stmnt_list R_CURL_PAREN;
@@ -216,19 +215,15 @@ property_call ::= expr DOT IDENTIFIER;
 //variables
 
  var_assignment ::= type IDENTIFIER ASSIGN expr expr_list
-  | IDENTIFIER ASSIGN expr expr_list
-  | property_call ASSIGN expr expr_list
+  | expr ASSIGN expr expr_list
   ;
 
 var_declaration ::= type IDENTIFIER;
 
 fdef ::= FUN_DEF type IDENTIFIER L_SOFT_PAREN type IDENTIFIER var_list R_SOFT_PAREN L_CURL_PAREN statement stmnt_list R_CURL_PAREN
-    | FUN_DEF type IDENTIFIER L_SOFT_PAREN type IDENTIFIER var_list R_SOFT_PAREN L_CURL_PAREN R_CURL_PAREN
     | FUN_DEF type IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN L_CURL_PAREN statement stmnt_list R_CURL_PAREN
-    | FUN_DEF type IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN L_CURL_PAREN R_CURL_PAREN
     | FUN_DEF IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN L_CURL_PAREN R_CURL_PAREN
     | FUN_DEF IDENTIFIER L_SOFT_PAREN R_SOFT_PAREN L_CURL_PAREN statement stmnt_list R_CURL_PAREN
-    | FUN_DEF IDENTIFIER L_SOFT_PAREN type IDENTIFIER var_list R_SOFT_PAREN L_CURL_PAREN R_CURL_PAREN
     | FUN_DEF IDENTIFIER L_SOFT_PAREN type IDENTIFIER var_list R_SOFT_PAREN L_CURL_PAREN statement stmnt_list R_CURL_PAREN
     ;
 
@@ -250,6 +245,10 @@ seq_call ::= L_SQ_PAREN expr R_SQ_PAREN
     | L_SQ_PAREN expr R_SQ_PAREN seq_call
     | L_SQ_PAREN expr COLON R_SQ_PAREN
     | L_SQ_PAREN expr COLON R_SQ_PAREN seq_call
+    | L_SQ_PAREN COLON R_SQ_PAREN
+    | L_SQ_PAREN COLON R_SQ_PAREN seq_call
+    | L_SQ_PAREN COLON expr R_SQ_PAREN
+    | L_SQ_PAREN COLON expr R_SQ_PAREN seq_call
     ;
 
 set_assignment ::= SET L_TRI_PAREN type R_TRI_PAREN IDENTIFIER ASSIGN expr;
@@ -259,16 +258,22 @@ set_literal ::= L_CURL_PAREN R_CURL_PAREN
     ;
 
 //dictionaries
-dict_assignment ::= DICTIONARY L_TRI_PAREN type type_list R_TRI_PAREN IDENTIFIER ASSIGN expr;
-dict_declaration ::= DICTIONARY L_TRI_PAREN type type_list R_TRI_PAREN IDENTIFIER;
+dict_assignment ::= DICTIONARY L_TRI_PAREN type COMMA type type_list R_TRI_PAREN IDENTIFIER ASSIGN expr;
+dict_declaration ::= DICTIONARY L_TRI_PAREN type COMMA type type_list R_TRI_PAREN IDENTIFIER;
 
 dict_literal ::= L_SOFT_PAREN expr COLON expr dict_element_list R_SOFT_PAREN
     ;
 
-alias ::= ALIAS type IDENTIFIER;
+alias ::= ALIAS type IDENTIFIER
+ | ALIAS THREAD IDENTIFIER
+ ;
 
-lambda ::= FUNCTION IDENTIFIER ASSIGN lambda_list L_CURL_PAREN statement stmnt_list R_CURL_PAREN
- | FUNCTION IDENTIFIER ASSIGN PIPE IDENTIFIER id_list PIPE lambda_list ARROW expr
+lambda ::= FUNCTION IDENTIFIER ASSIGN lambda_literal
+ //| FUNCTION IDENTIFIER ASSIGN expr
+ | lambda_literal
+ ;
+lambda_literal ::= PIPE IDENTIFIER id_list PIPE lambda_list ARROW L_CURL_PAREN statement stmnt_list R_CURL_PAREN
+ | PIPE IDENTIFIER id_list PIPE lambda_list ARROW expr
  ;
 
 
