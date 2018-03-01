@@ -188,7 +188,7 @@ property_call ::= expr DOT IDENTIFIER;
  | RATIONAL
  | FLOAT
  | DICTIONARY L_TRI_PAREN type type_list R_TRI_PAREN
- | SEQUENCE L_TRI_PAREN type type_list R_TRI_PAREN
+ | SEQUENCE L_TRI_PAREN type R_TRI_PAREN
  | SET L_TRI_PAREN type R_TRI_PAREN
  | BOOLEAN
  | TOP
@@ -239,8 +239,8 @@ thread_assignment ::= THREAD IDENTIFIER ASSIGN L_CURL_PAREN statement stmnt_list
 
 //sequences
 
-seq_assignment ::= SEQUENCE L_TRI_PAREN type type_list R_TRI_PAREN IDENTIFIER ASSIGN expr;
-seq_declaration ::= SEQUENCE L_TRI_PAREN type type_list R_TRI_PAREN IDENTIFIER;
+seq_assignment ::= SEQUENCE L_TRI_PAREN type R_TRI_PAREN IDENTIFIER ASSIGN expr;
+seq_declaration ::= SEQUENCE L_TRI_PAREN type R_TRI_PAREN IDENTIFIER;
 seq_literal ::= L_SQ_PAREN R_SQ_PAREN
     | L_SQ_PAREN expr expr_list R_SQ_PAREN
     ;
