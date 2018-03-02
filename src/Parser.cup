@@ -161,7 +161,7 @@ compound_stmnt ::= FORALL L_SOFT_PAREN expr R_SOFT_PAREN DO stmnt_list OD
 
 
 
-property_call ::= expr DOT IDENTIFIER;
+property_call ::= expr DOT expr;
 
  binary_operator ::= SMALLER_EQ
  | BIGGER_EQ
@@ -264,8 +264,8 @@ dict_declaration ::= DICTIONARY L_TRI_PAREN type COMMA type type_list R_TRI_PARE
 dict_literal ::= L_SOFT_PAREN expr COLON expr dict_element_list R_SOFT_PAREN
     ;
 
-alias ::= ALIAS type IDENTIFIER
- | ALIAS THREAD IDENTIFIER
+alias ::= ALIAS type type
+ | ALIAS THREAD type
  ;
 
 lambda ::= FUNCTION IDENTIFIER ASSIGN lambda_literal
