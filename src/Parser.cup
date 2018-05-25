@@ -102,7 +102,7 @@ starter ::= tdef SEMI starter
  | thread_assignment SEMI starter
  | alias SEMI starter
  | lambda SEMI starter
- | main SEMI
+ | main SEMI SEMI
  ;
 
 statement ::= function_call SEMI
